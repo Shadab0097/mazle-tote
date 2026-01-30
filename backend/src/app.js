@@ -30,13 +30,12 @@ const allowedOrigins = [
     process.env.FRONTEND_URL
 ].filter(Boolean);
 
-app.use(helmet());
-
+// CORS must come BEFORE helmet
 app.use(cors({
     origin: function (origin, callback) {
         // Allow requests with no origin (like mobile apps or curl requests)
         if (!origin) return callback(null, true);
-        if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+        if (allowedOrigins.indexOf(origin) !== -1) {
             callback(null, true);
         } else {
             console.log('Blocked by CORS:', origin);
@@ -44,6 +43,11 @@ app.use(cors({
         }
     },
     credentials: true
+}));
+
+// Helmet after CORS, with crossOriginResourcePolicy disabled to allow cross-origin requests
+app.use(helmet({
+    crossOriginResourcePolicy: false,
 }));
 if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
