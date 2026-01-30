@@ -111,7 +111,7 @@ const Checkout = () => {
         try {
             const orderData = {
                 items: items.map(item => ({
-                    product: item.product,
+                    product: item.product || item._id, // Fallback for older cart items
                     name: item.name,
                     price: item.price,
                     quantity: item.quantity,

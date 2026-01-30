@@ -362,7 +362,13 @@ const Home = () => {
     }, [dispatch]);
 
     const handleAddToCart = (product) => {
-        dispatch(addToCart({ ...product, quantity: 1 }));
+        dispatch(addToCart({
+            product: product._id,
+            name: product.name,
+            price: product.price,
+            image: product.images?.[0] || '',
+            quantity: 1,
+        }));
         navigate('/cart');
     };
 
