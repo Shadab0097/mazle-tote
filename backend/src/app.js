@@ -30,6 +30,8 @@ const allowedOrigins = [
     process.env.FRONTEND_URL
 ].filter(Boolean);
 
+app.use(helmet());
+
 app.use(cors({
     origin: function (origin, callback) {
         // Allow requests with no origin (like mobile apps or curl requests)
@@ -43,7 +45,6 @@ app.use(cors({
     },
     credentials: true
 }));
-app.use(helmet());
 if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
 }
