@@ -13,8 +13,7 @@ const initialOptions = {
   clientId: PAYPAL_CLIENT_ID,
   currency: PAYPAL_CURRENCY,
   intent: 'capture',
-  // Enable debug mode for sandbox testing - shows more verbose errors
-  debug: true,
+  // debug: true, // Disabled for production - enable for sandbox testing only
   // Optional: add components if needed
   // components: 'buttons,marks',
 };
