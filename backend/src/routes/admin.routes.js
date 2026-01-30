@@ -21,7 +21,7 @@ router.post('/login', async (req, res) => {
                 httpOnly: true,
                 expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
                 secure: process.env.NODE_ENV === 'production',
-                sameSite: 'none',
+                sameSite: 'None',
             });
 
             res.json({
@@ -66,7 +66,7 @@ router.post('/logout', (req, res) => {
         httpOnly: true,
         expires: new Date(0),
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'none',
+        sameSite: 'None',
     });
     res.status(200).json({ message: 'Admin logged out successfully' });
 });
