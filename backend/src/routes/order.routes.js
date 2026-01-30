@@ -60,7 +60,9 @@ router.post('/', protect, async (req, res) => {
 // @access  Private (User)
 router.get('/my-orders', protect, async (req, res) => {
     try {
-        const orders = await Order.find({ user: req.user._id });
+        const orders = await Order.find({ user: req.user._id })
+            .populate('items.product')
+            .sort({ createdAt: -1 });
         res.json(orders);
     } catch (error) {
         res.status(500).json({ message: error.message });

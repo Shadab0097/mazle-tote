@@ -30,6 +30,7 @@ const MyOrders = () => {
         const fetchOrders = async () => {
             try {
                 const { data } = await api.get('/api/orders/my-orders');
+                console.log('Fetched Orders:', data); // Debugging: Check if product images are present
                 setOrders(data);
             } catch (err) {
                 console.error('Failed to fetch orders:', err);

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const axios = require('axios');
 const Order = require('../models/Order');
+const Product = require('../models/Product');
 const { protect } = require('../middlewares/userAuth.middleware');
 const dotenv = require('dotenv');
 const sendEmail = require('../utils/sendEmail');
@@ -231,7 +232,24 @@ router.post('/paypal/capture-order', protect, async (req, res) => {
                 status: 'Completed'
             };
             await order.save();
+            await order.save();
             console.log(`Payment captured successfully for order ${localOrderId}`);
+
+            // --- DECREMENT STOCK ---
+            try {
+                for (const item of order.items) {
+                    const productModel = await Product.findById(item.product);
+                    if (productModel) {
+                        productModel.stock = Math.max(0, productModel.stock - item.quantity);
+                        await productModel.save();
+                        console.log(`Stock updated for ${productModel.name}: ${productModel.stock}`);
+                    }
+                }
+            } catch (stockError) {
+                console.error('Failed to update stock:', stockError);
+                // Don't fail the request, just log error
+            }
+            // -----------------------
 
             // --- SEND EMAIL NOTIFICATIONS (Fire-and-forget, don't block response) ---
             (async () => {
