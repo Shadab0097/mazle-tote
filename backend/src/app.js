@@ -30,25 +30,34 @@ const allowedOrigins = [
     process.env.FRONTEND_URL
 ].filter(Boolean);
 
-// CORS must come BEFORE helmet
+// Manual CORS headers - fallback to ensure headers are ALWAYS set
+app.use((req, res, next) => {
+    const origin = req.headers.origin;
+    if (allowedOrigins.includes(origin)) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+    }
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+
+    // Handle preflight
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
+    next();
+});
+
+// CORS package (backup)
 app.use(cors({
-    origin: function (origin, callback) {
-        // Allow requests with no origin (like mobile apps or curl requests)
-        if (!origin) return callback(null, true);
-        if (allowedOrigins.indexOf(origin) !== -1) {
-            callback(null, true);
-        } else {
-            console.log('Blocked by CORS:', origin);
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
+    origin: allowedOrigins,
     credentials: true
 }));
 
-// Helmet after CORS, with crossOriginResourcePolicy disabled to allow cross-origin requests
-app.use(helmet({
-    crossOriginResourcePolicy: false,
-}));
+// TEMPORARILY DISABLED helmet to debug CORS issue
+// app.use(helmet({
+//     crossOriginResourcePolicy: false,
+// }));
+
 if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
 }
