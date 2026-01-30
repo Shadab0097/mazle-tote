@@ -233,57 +233,57 @@ router.post('/paypal/capture-order', protect, async (req, res) => {
             await order.save();
             console.log(`Payment captured successfully for order ${localOrderId}`);
 
-            // --- SEND EMAIL NOTIFICATIONS ---
-            try {
-                // Populate user to get email if not populated
-                const orderWithUser = await Order.findById(localOrderId).populate('user', 'email name');
-                const userEmail = orderWithUser.user.email;
-                const adminEmail = process.env.ADMIN_EMAIL;
+            // --- SEND EMAIL NOTIFICATIONS (Fire-and-forget, don't block response) ---
+            (async () => {
+                try {
+                    const orderWithUser = await Order.findById(localOrderId).populate('user', 'email name');
+                    const userEmail = orderWithUser.user.email;
+                    const adminEmail = process.env.ADMIN_EMAIL;
 
-                const itemsList = order.items.map(item =>
-                    `<li>${item.name} x ${item.quantity} - $${item.price.toFixed(2)}</li>`
-                ).join('');
+                    const itemsList = order.items.map(item =>
+                        `<li>${item.name} x ${item.quantity} - $${item.price.toFixed(2)}</li>`
+                    ).join('');
 
-                const emailMessage = `
-                    <h1>Order Confirmed!</h1>
-                    <p>Hi ${orderWithUser.user.name},</p>
-                    <p>Thank you for your purchase from Mazel Tote.</p>
-                    <p><strong>Order ID:</strong> ${order._id}</p>
-                    <p><strong>Date:</strong> ${new Date().toLocaleString()}</p>
-                    <p><strong>Total:</strong> $${order.totalAmount.toFixed(2)}</p>
-                    <h3>Items:</h3>
-                    <ul>${itemsList}</ul>
-                    <p>We will notify you when your order ships.</p>
-                `;
+                    const emailMessage = `
+                        <h1>Order Confirmed!</h1>
+                        <p>Hi ${orderWithUser.user.name},</p>
+                        <p>Thank you for your purchase from Mazel Tote.</p>
+                        <p><strong>Order ID:</strong> ${order._id}</p>
+                        <p><strong>Date:</strong> ${new Date().toLocaleString()}</p>
+                        <p><strong>Total:</strong> $${order.totalAmount.toFixed(2)}</p>
+                        <h3>Items:</h3>
+                        <ul>${itemsList}</ul>
+                        <p>We will notify you when your order ships.</p>
+                    `;
 
-                // 1. Send to Customer
-                await sendEmail({
-                    email: userEmail,
-                    subject: 'Order Confirmation - Mazel Tote',
-                    html: emailMessage
-                });
-
-                // 2. Send to Admin
-                const adminMessage = `
-                    <h1>New Order Received</h1>
-                    <p><strong>Order ID:</strong> ${order._id}</p>
-                    <p><strong>Customer:</strong> ${orderWithUser.user.name} (${userEmail})</p>
-                    <p><strong>Total:</strong> $${order.totalAmount.toFixed(2)}</p>
-                    <p>Check the admin dashboard for details.</p>
-                `;
-
-                if (adminEmail) {
+                    // 1. Send to Customer
                     await sendEmail({
-                        email: adminEmail,
-                        subject: `New Order Alert - ${order._id}`,
-                        html: adminMessage
+                        email: userEmail,
+                        subject: 'Order Confirmation - Mazel Tote',
+                        html: emailMessage
                     });
-                }
 
-                console.log(`Emails sent for order ${localOrderId}`);
-            } catch (emailError) {
-                console.error('Failed to send email notifications:', emailError);
-            }
+                    // 2. Send to Admin
+                    if (adminEmail) {
+                        const adminMessage = `
+                            <h1>New Order Received</h1>
+                            <p><strong>Order ID:</strong> ${order._id}</p>
+                            <p><strong>Customer:</strong> ${orderWithUser.user.name} (${userEmail})</p>
+                            <p><strong>Total:</strong> $${order.totalAmount.toFixed(2)}</p>
+                            <p>Check the admin dashboard for details.</p>
+                        `;
+                        await sendEmail({
+                            email: adminEmail,
+                            subject: `New Order Alert - ${order._id}`,
+                            html: adminMessage
+                        });
+                    }
+
+                    console.log(`Emails sent for order ${localOrderId}`);
+                } catch (emailError) {
+                    console.error('Failed to send email notifications:', emailError);
+                }
+            })(); // Execute immediately but don't wait
             // --------------------------------
 
         } else {
