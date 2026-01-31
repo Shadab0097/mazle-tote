@@ -74,8 +74,29 @@ router.get('/my-orders', protect, async (req, res) => {
 // @access  Private (Admin)
 router.get('/', protectAdmin, async (req, res) => {
     try {
-        const orders = await Order.find({}).populate('user', 'id name email');
-        res.json(orders);
+        const page = parseInt(req.query.page);
+        const limit = parseInt(req.query.limit);
+
+        if (page && limit) {
+            const skip = (page - 1) * limit;
+            const count = await Order.countDocuments({});
+            const orders = await Order.find({})
+                .populate('user', 'id name email')
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(limit);
+
+            res.json({
+                orders,
+                page,
+                pages: Math.ceil(count / limit),
+                total: count
+            });
+        } else {
+            // Backward compatibility: return all if no pagination params
+            const orders = await Order.find({}).populate('user', 'id name email').sort({ createdAt: -1 });
+            res.json(orders);
+        }
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

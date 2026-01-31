@@ -19,7 +19,7 @@ const Hero = () => {
 
             {/* MAZEL Masking - Top Watermark */}
             <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-full overflow-hidden pointer-events-none select-none z-0 opacity-50 lg:opacity-100">
-                <span className="block text-[10rem] sm:text-[14rem] lg:text-[18rem] font-black text-[var(--color-primary)]/5 tracking-widest leading-none text-center whitespace-nowrap">
+                <span className="block text-[10rem] sm:text-[14rem] lg:text-[18rem] font-black text-[var(--color-primary)]/10 tracking-widest leading-none text-center whitespace-nowrap">
                     MAZEL
                 </span>
             </div>
@@ -28,51 +28,62 @@ const Hero = () => {
                 <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
                     {/* Text Content */}
                     <div className="lg:w-1/2 space-y-8 text-center lg:text-left order-2 lg:order-1">
-                        <div className="inline-block px-4 py-1.5 rounded-full bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-semibold text-sm tracking-wide uppercase mb-2 animate-pulse">
-                            New Collection 2026
+
+                        {/* 100% Donation Badge */}
+                        <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-rose-50 border border-rose-100 text-rose-600 font-bold text-sm tracking-wide uppercase mb-4 shadow-sm animate-fade-in-up">
+                            <FiHeart className="fill-rose-500 animate-pulse text-rose-500" size={16} />
+                            <span>100% of Profits Donated to Charity</span>
                         </div>
+
                         <h1 className="text-5xl lg:text-7xl font-extrabold text-[var(--color-text)] leading-[1.1]">
-                            Carry Your World <br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-primary)] to-blue-400">
-                                With Mazel.
+                            Carry Content, <br />
+                            <span className="font-serif italic text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-primary)] to-blue-400">
+                                Create Impact.
                             </span>
                         </h1>
                         <p className="text-lg text-gray-600 leading-relaxed max-w-xl mx-auto lg:mx-0">
-                            Effortless style meets everyday utility. Crafted for the dreamers, the doers, and everyone in between.
+                            <strong>Shop with purpose.</strong> Every Mazel Tote you purchase directly funds verified charities. Look good while doing good.
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                             <Link to="/products">
                                 <Button size="lg" className="rounded-full h-14 px-8 text-lg flex items-center gap-2 group shadow-xl shadow-blue-500/20">
-                                    Shop Now
+                                    Shop & Support
                                     <FiArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
                                 </Button>
                             </Link>
-                            <Link to="/products">
+                            <Link to="/about">
                                 <Button variant="secondary" size="lg" className="rounded-full h-14 px-8 text-lg border-2 border-[var(--color-text)] bg-white hover:bg-[var(--color-bg-secondary)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition-all">
-                                    View Lookbook
+                                    Our Mission
                                 </Button>
                             </Link>
                         </div>
 
-                        <div className="flex items-center justify-center lg:justify-start gap-8 pt-4 opacity-80">
-                            <div className="flex -space-x-3">
-                                {[1, 2, 3, 4].map((i) => (
-                                    <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-gray-200 overflow-hidden">
-                                        <img src={`https://randomuser.me/api/portraits/women/${i + 20}.jpg`} alt="User" className="w-full h-full object-cover" />
-                                    </div>
-                                ))}
-                            </div>
-                            <div className="text-sm font-medium text-[var(--color-text)] text-left">
-                                <div className="flex text-yellow-400">
-                                    {[1, 2, 3, 4, 5].map(s => <span key={s}>★</span>)}
+                        {/* Impact Indicators - Styled like original avatars but for charity */}
+                        <div className="flex items-center justify-center lg:justify-start gap-6 pt-6 opacity-90">
+                            <div className="flex -space-x-4">
+                                <div className="w-12 h-12 rounded-full border-2 border-white bg-blue-100 flex items-center justify-center text-blue-600 shadow-sm z-30">
+                                    <FiShield size={20} />
                                 </div>
-                                500+ Happy Carriers
+                                <div className="w-12 h-12 rounded-full border-2 border-white bg-emerald-100 flex items-center justify-center text-emerald-600 shadow-sm z-20">
+                                    <FiGlobe size={20} />
+                                </div>
+                                <div className="w-12 h-12 rounded-full border-2 border-white bg-rose-100 flex items-center justify-center text-rose-600 shadow-sm z-10">
+                                    <FiHeart size={20} />
+                                </div>
+                            </div>
+                            <div className="text-left">
+                                <div className="text-sm font-bold text-[var(--color-text)]">
+                                    Verified Impact
+                                </div>
+                                <div className="text-xs text-gray-500">
+                                    3+ Partner Charities
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     {/* Hero Image */}
-                    <div className="lg:w-1/2 relative order-1 lg:order-2 w-full max-w-md lg:max-w-none mx-auto">
+                    <div className="lg:w-1/2 relative order-1 lg:order-2 w-full max-w-md lg:max-w-none mx-auto lg:pr-12">
                         <div className="relative z-10 rounded-3xl overflow-hidden shadow-2xl transform rotate-2 hover:rotate-0 transition-all duration-700 ease-out border-4 lg:border-8 border-white bg-gray-100">
                             <img
                                 src="https://images.unsplash.com/photo-1590874103328-eac38a683ce7?q=80&w=1676&auto=format&fit=crop"
@@ -87,7 +98,7 @@ const Hero = () => {
                             </div>
                         </div>
                         {/* Decorative Element behind image */}
-                        <div className="absolute -top-6 -right-6 lg:-top-10 lg:-right-10 w-full h-full border-4 border-[var(--color-primary)] rounded-3xl -z-10 hidden lg:block"></div>
+                        <div className="absolute -top-6 -right-2 lg:-top-10 lg:-right-4 w-full h-full border-4 border-[var(--color-primary)] rounded-3xl -z-10 hidden lg:block"></div>
                     </div>
                 </div>
             </Container>
@@ -113,6 +124,24 @@ const MeetFounder = () => {
             <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-white via-[var(--color-bg-secondary)]/50 to-transparent z-10 pointer-events-none" />
 
             <Container className="relative z-10">
+                {/* Section Header - Stylish */}
+                <div className="text-center mb-16">
+                    <div className="flex items-center justify-center gap-4 mb-4">
+                        <span className="h-[1px] w-12 bg-gradient-to-r from-transparent to-[var(--color-primary)]/50"></span>
+                        <span className="text-xs font-bold uppercase tracking-[0.3em] text-[var(--color-primary)]">Our Story</span>
+                        <span className="h-[1px] w-12 bg-gradient-to-l from-transparent to-[var(--color-primary)]/50"></span>
+                    </div>
+                    <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-[var(--color-text)] leading-tight">
+                        The Heart Behind{" "}
+                        <span className="font-serif italic text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-primary)] to-blue-400">
+                            Mazel Tote
+                        </span>
+                    </h2>
+                    <p className="mt-4 text-gray-500 max-w-xl mx-auto text-base md:text-lg">
+                        A young visionary on a mission to spread kindness and repair the world, one tote at a time.
+                    </p>
+                </div>
+
                 <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
                     {/* Image Side */}
                     <div className="lg:w-1/2 relative order-1">
@@ -137,11 +166,14 @@ const MeetFounder = () => {
                     <div className="lg:w-1/2 space-y-8 order-2">
                         <div>
                             <div className="inline-block px-4 py-1.5 rounded-full bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-semibold text-xs tracking-wide uppercase mb-3">
-                                The Visionary
+                                Founder & Designer
                             </div>
-                            <h2 className="text-4xl lg:text-5xl font-extrabold text-[var(--color-text)] leading-tight mb-6">
-                                Meet the <span className="text-[var(--color-primary)]">Founder</span>
-                            </h2>
+                            <h3 className="text-3xl lg:text-4xl font-extrabold text-[var(--color-text)] leading-tight mb-2">
+                                Brielle Harbur
+                            </h3>
+                            <p className="text-[var(--color-primary)] font-medium text-sm">
+                                12-year-old entrepreneur • Boca Raton, Florida
+                            </p>
                         </div>
 
                         <div className="space-y-6 text-gray-600 text-lg leading-relaxed">
@@ -311,6 +343,8 @@ const ProductCardComponent = ({ product, onAddToCart }) => (
                 <img
                     src={product.images[0]}
                     alt={product.name}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
                 />
             ) : (
@@ -358,8 +392,11 @@ const Home = () => {
     const { items: products, loading } = useSelector((state) => state.products);
 
     useEffect(() => {
-        dispatch(fetchProducts());
-    }, [dispatch]);
+        // Optimization: Only fetch if we don't have products yet
+        if (products.length === 0) {
+            dispatch(fetchProducts());
+        }
+    }, [dispatch, products.length]);
 
     const handleAddToCart = (product) => {
         dispatch(addToCart({
@@ -369,6 +406,7 @@ const Home = () => {
             image: product.images?.[0] || '',
             quantity: 1,
         }));
+        window.scrollTo({ top: 0, behavior: 'smooth' });
         navigate('/cart');
     };
 

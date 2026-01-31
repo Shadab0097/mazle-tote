@@ -2,20 +2,19 @@ import { configureStore } from '@reduxjs/toolkit';
 import authReducer, { loginUser, registerUser, logoutUser } from './authSlice';
 import cartReducer, { clearCart } from './cartSlice';
 import productReducer from './productSlice';
+import ordersReducer, { clearOrders } from './ordersSlice';
+import adminReducer, { clearAdminData } from './adminSlice';
 
-// Middleware to clear cart on auth state changes
-const cartClearMiddleware = (store) => (next) => (action) => {
+// Middleware to clear cart and orders on auth state changes
+const authStateMiddleware = (store) => (next) => (action) => {
     const result = next(action);
 
-    // Clear cart when user logs out
+    // Clear cart and orders when user logs out
     if (logoutUser.fulfilled.match(action)) {
         store.dispatch(clearCart());
+        store.dispatch(clearOrders());
+        store.dispatch(clearAdminData());
     }
-
-    // Cart cleared on logout only to allow guest cart to persist on login
-    // if (loginUser.fulfilled.match(action) || registerUser.fulfilled.match(action)) {
-    //    store.dispatch(clearCart());
-    // }
 
     return result;
 };
@@ -25,9 +24,11 @@ export const store = configureStore({
         auth: authReducer,
         cart: cartReducer,
         products: productReducer,
+        orders: ordersReducer,
+        admin: adminReducer,
     },
     middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware().concat(cartClearMiddleware),
+        getDefaultMiddleware().concat(authStateMiddleware),
 });
 
 export default store;

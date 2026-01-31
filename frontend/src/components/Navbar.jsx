@@ -57,6 +57,11 @@ const Navbar = () => {
 
   const isActive = (path) => location.pathname === path;
 
+  // Smooth scroll to top when navigation link is clicked
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${isOpen
@@ -69,7 +74,7 @@ const Navbar = () => {
       <Container>
         <div className="flex justify-between items-center">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 group">
+          <Link to="/" onClick={scrollToTop} className="flex items-center gap-2 group">
             <img src="/logo.png" alt="Mazel Tote" className="h-14 md:h-16 w-auto object-contain" />
           </Link>
 
@@ -79,6 +84,7 @@ const Navbar = () => {
               <Link
                 key={link.name}
                 to={link.path}
+                onClick={scrollToTop}
                 className={`text-sm font-medium tracking-wide transition-colors relative group py-2 ${isActive(link.path)
                   ? 'text-[var(--color-text)]'
                   : 'text-gray-500 hover:text-[var(--color-text)]'
@@ -167,7 +173,7 @@ const Navbar = () => {
               <Link
                 key={link.name}
                 to={link.path}
-                onClick={() => setIsOpen(false)}
+                onClick={() => { scrollToTop(); setIsOpen(false); }}
                 className={`text-3xl font-bold tracking-tight transition-colors ${isActive(link.path) ? 'text-[var(--color-primary)]' : 'text-[var(--color-text)]'
                   }`}
               >
@@ -179,7 +185,7 @@ const Navbar = () => {
           <div className="mt-auto border-t border-gray-100 pt-8 flex flex-col gap-4">
             {isAuthenticated ? (
               <>
-                <Link to="/profile" onClick={() => setIsOpen(false)} className="flex items-center gap-3 text-lg font-medium">
+                <Link to="/profile" onClick={() => { scrollToTop(); setIsOpen(false); }} className="flex items-center gap-3 text-lg font-medium">
                   <FiUser /> My Profile
                 </Link>
                 <button onClick={() => { handleLogout(); setIsOpen(false); }} className="text-left text-lg font-medium text-gray-500 hover:text-red-500">
@@ -188,10 +194,10 @@ const Navbar = () => {
               </>
             ) : (
               <div className="grid grid-cols-2 gap-4">
-                <Link to="/login" onClick={() => setIsOpen(false)}>
+                <Link to="/login" onClick={() => { scrollToTop(); setIsOpen(false); }}>
                   <Button variant="secondary" className="w-full h-12 rounded-xl text-base">Log In</Button>
                 </Link>
-                <Link to="/register" onClick={() => setIsOpen(false)}>
+                <Link to="/register" onClick={() => { scrollToTop(); setIsOpen(false); }}>
                   <Button className="w-full h-12 rounded-xl text-base">Sign Up</Button>
                 </Link>
               </div>

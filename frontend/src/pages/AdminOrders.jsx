@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
-import { FiSearch } from 'react-icons/fi';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchAllOrders } from '../store/adminSlice';
+import { FiSearch, FiRefreshCw } from 'react-icons/fi';
 import api from '../services/api';
 import { FiClock, FiCheckCircle, FiTruck, FiPackage, FiFilter, FiAlertCircle, FiX, FiPrinter } from 'react-icons/fi';
 import { Card } from '@/components/ui/Card';
@@ -8,6 +10,11 @@ import { useToast } from '../context/ToastContext';
 import ShippingLabelModal from '../components/ShippingLabelModal';
 
 const AdminOrders = () => {
+
+    const dispatch = useDispatch();
+    const { orders: adminOrders, loading: adminLoading, ordersLastFetched } = useSelector((state) => state.admin);
+
+    // Initial Orders
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -28,18 +35,30 @@ const AdminOrders = () => {
     const toast = useToast();
 
     useEffect(() => {
-        fetchOrders();
-    }, []);
+        // Optimization: Fetch only if not present or stale (> 2 mins for orders)
+        const isStale = !ordersLastFetched || (Date.now() - ordersLastFetched > 2 * 60 * 1000);
 
-    const fetchOrders = async () => {
-        try {
-            const { data } = await api.get('/api/orders');
-            setOrders(data);
-        } catch (error) {
-            console.error('Failed to fetch orders');
-        } finally {
+        if (adminOrders.length === 0 || isStale) {
+            dispatch(fetchAllOrders());
+        }
+    }, [dispatch, adminOrders.length, ordersLastFetched]);
+
+    // Sync Redux state to local state
+    useEffect(() => {
+        setOrders(adminOrders);
+        if (!adminLoading) {
             setLoading(false);
         }
+    }, [adminOrders, adminLoading]);
+
+    const handleRefresh = () => {
+        setLoading(true);
+        dispatch(fetchAllOrders()).finally(() => setLoading(false));
+    };
+
+    // Helper to refresh after update
+    const refreshOrders = () => {
+        dispatch(fetchAllOrders());
     };
 
     const initiateStatusUpdate = (orderId, newStatus) => {
@@ -96,6 +115,14 @@ const AdminOrders = () => {
             default: return <FiClock />;
         }
     }
+
+    // Check if order is less than 6 hours old
+    const isNewOrder = (createdAt) => {
+        const orderTime = new Date(createdAt).getTime();
+        const now = Date.now();
+        const sixHours = 6 * 60 * 60 * 1000; // 6 hours in ms
+        return (now - orderTime) < sixHours;
+    };
 
     const filteredOrders = orders
         .filter(order => {
@@ -196,7 +223,14 @@ const AdminOrders = () => {
                                 filteredOrders.map((order) => (
                                     <tr key={order._id} className="hover:bg-gray-50 transition-colors">
                                         <td className="px-6 py-4">
-                                            <div className="font-mono font-bold text-sm">#{order._id.slice(-8).toUpperCase()}</div>
+                                            <div className="flex items-center gap-2">
+                                                <span className="font-mono font-bold text-sm">#{order._id.slice(-8).toUpperCase()}</span>
+                                                {isNewOrder(order.createdAt) && (
+                                                    <span className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-gradient-to-r from-emerald-500 to-teal-400 text-white rounded-full animate-pulse">
+                                                        New
+                                                    </span>
+                                                )}
+                                            </div>
                                             <div className="text-xs text-gray-400 mt-1">{new Date(order.createdAt).toLocaleString()}</div>
                                         </td>
                                         <td className="px-6 py-4">

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Provider, useDispatch } from 'react-redux';
 import { store } from './store';
@@ -31,10 +31,17 @@ import Checkout from './pages/Checkout';
 import Profile from './pages/Profile';
 import MyOrders from './pages/MyOrders';
 
-// Admin Pages
-import AdminDashboard from './pages/AdminDashboard';
-import AdminProducts from './pages/AdminProducts';
-import AdminOrders from './pages/AdminOrders';
+// Admin Pages (Lazy Loaded)
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const AdminProducts = lazy(() => import('./pages/AdminProducts'));
+const AdminOrders = lazy(() => import('./pages/AdminOrders'));
+
+// Loading component for Suspense
+const LoadingSpinner = () => (
+  <div className="flex items-center justify-center min-h-screen">
+    <div className="w-10 h-10 border-4 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin"></div>
+  </div>
+);
 
 function AuthChecker() {
   const dispatch = useDispatch();
@@ -42,10 +49,22 @@ function AuthChecker() {
   useEffect(() => {
     // Check if user is authenticated on app load
     const checkAuth = async () => {
-      // Try user auth first
-      await dispatch(getProfile());
-      // If that fails, try admin auth
-      await dispatch(getAdminProfile());
+      const path = window.location.pathname;
+
+      // Optimization: Prioritize checks based on current route to reduce 401s
+      if (path.startsWith('/admin')) {
+        // If on admin route, check admin first
+        const adminAction = await dispatch(getAdminProfile());
+        // If admin check failed, try user check (fallback)
+        if (getAdminProfile.rejected.match(adminAction)) {
+          await dispatch(getProfile());
+        }
+      } else {
+        // Normal user route - check user first
+        await dispatch(getProfile());
+        // We don't auto-check admin on user routes to save a request
+        // Admin state will be re-verified if they navigate to /admin
+      }
     };
     checkAuth();
   }, [dispatch]);
@@ -90,9 +109,21 @@ function AppRoutes() {
         {/* Admin Routes */}
         <Route element={<AdminRoute />}>
           <Route element={<AdminLayout />}>
-            <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="/admin/products" element={<AdminProducts />} />
-            <Route path="/admin/orders" element={<AdminOrders />} />
+            <Route path="/admin" element={
+              <Suspense fallback={<LoadingSpinner />}>
+                <AdminDashboard />
+              </Suspense>
+            } />
+            <Route path="/admin/products" element={
+              <Suspense fallback={<LoadingSpinner />}>
+                <AdminProducts />
+              </Suspense>
+            } />
+            <Route path="/admin/orders" element={
+              <Suspense fallback={<LoadingSpinner />}>
+                <AdminOrders />
+              </Suspense>
+            } />
           </Route>
         </Route>
       </Routes>

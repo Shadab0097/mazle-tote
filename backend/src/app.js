@@ -27,36 +27,38 @@ app.use((req, res, next) => {
 const allowedOrigins = [
     'https://mazle-tote.pages.dev',
     'http://localhost:5173',
+    'http://localhost:5000',
     process.env.FRONTEND_URL
 ].filter(Boolean);
 
-// Manual CORS headers - fallback to ensure headers are ALWAYS set
-app.use((req, res, next) => {
-    const origin = req.headers.origin;
-    if (allowedOrigins.includes(origin)) {
-        res.setHeader('Access-Control-Allow-Origin', origin);
-    }
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-
-    // Handle preflight
-    if (req.method === 'OPTIONS') {
-        return res.status(200).end();
-    }
-    next();
-});
-
-// CORS package (backup)
+// CORS Configuration - Explicitly reflect origin for credentials support
 app.use(cors({
-    origin: allowedOrigins,
-    credentials: true
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+
+        // Development: Allow all origins by reflecting the request origin
+        if (process.env.NODE_ENV === 'development') {
+            return callback(null, origin); // Reflect origin, not wildcard
+        }
+
+        // Production: Strict allowlist
+        if (allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, origin); // Reflect origin, not wildcard
+        } else {
+            console.log('Blocked by CORS:', origin);
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization']
 }));
 
-// TEMPORARILY DISABLED helmet to debug CORS issue
-// app.use(helmet({
-//     crossOriginResourcePolicy: false,
-// }));
+// Helmet Security Headers (Disabled Cross-Origin Policy for Images/API)
+app.use(helmet({
+    crossOriginResourcePolicy: false,
+}));
 
 if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));

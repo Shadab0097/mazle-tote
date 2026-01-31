@@ -14,6 +14,13 @@ import { Card } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
 import { useToast } from '../context/ToastContext';
 
+// ============ SHIPPING CONFIGURATION ============
+// Set FREE_SHIPPING to false and adjust SHIPPING_COST/FREE_SHIPPING_THRESHOLD to enable charges
+const FREE_SHIPPING = true;  // Toggle: true = always free, false = charges apply
+const SHIPPING_COST = 15;    // Cost when not free (in USD)
+const FREE_SHIPPING_THRESHOLD = 75; // Orders above this get free shipping (when FREE_SHIPPING is false)
+// ================================================
+
 const Cart = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -22,7 +29,8 @@ const Cart = () => {
   const toast = useToast();
 
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const shipping = subtotal > 75 ? 0 : 15;
+  // Shipping logic: Free if FREE_SHIPPING is true, otherwise based on threshold
+  const shipping = FREE_SHIPPING ? 0 : (subtotal > FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST);
   const total = subtotal + shipping;
 
   const handleCheckout = () => {

@@ -61,8 +61,9 @@ const Contact = () => {
                                         <FiMail className="w-6 h-6" />
                                     </div>
                                     <div>
-                                        <h4 className="text-lg font-bold mb-1">Wholesale Inquiries</h4>
-                                        <p className="text-gray-500">partnerships@mazeltote.com</p>
+                                        <h4 className="text-lg font-bold mb-1">Primary Contact</h4>
+                                        <p className="text-[var(--color-text)] font-medium">Elizabeth Harbur</p>
+                                        <p className="text-gray-500">lizharbur@gmail.com</p>
                                     </div>
                                 </div>
 

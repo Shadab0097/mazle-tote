@@ -107,8 +107,8 @@ const Footer = () => {
         <div className="border-t border-gray-100 pt-6 flex flex-col md:flex-row justify-between items-center text-[10px] text-gray-400 uppercase tracking-wider font-bold">
           <p>© {currentYear} Mazel Tote. All rights reserved.</p>
           <div className="flex gap-6 mt-3 md:mt-0">
-            <Link to="/privacy" onClick={scrollToTop} className="hover:text-[var(--color-primary)] transition-colors">Privacy</Link>
-            <Link to="/terms" onClick={scrollToTop} className="hover:text-[var(--color-primary)] transition-colors">Terms</Link>
+            {/* <Link to="/privacy" onClick={scrollToTop} className="hover:text-[var(--color-primary)] transition-colors">Privacy</Link>
+            <Link to="/terms" onClick={scrollToTop} className="hover:text-[var(--color-primary)] transition-colors">Terms</Link> */}
           </div>
         </div>
       </Container>

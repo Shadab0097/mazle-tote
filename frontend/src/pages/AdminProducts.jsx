@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchProducts as fetchAllProducts } from '../store/productSlice';
 import api from '../services/api';
 import { FiPlus, FiEdit2, FiTrash2, FiX, FiSearch, FiImage, FiPackage, FiFilter, FiMoreHorizontal, FiUploadCloud } from 'react-icons/fi';
 import { Card } from '@/components/ui/Card';
@@ -7,7 +9,10 @@ import { Input } from '@/components/ui/Input';
 import { useToast } from '../context/ToastContext';
 
 const AdminProducts = () => {
-    const [products, setProducts] = useState([]);
+    const dispatch = useDispatch();
+    // Use Redux for products
+    const { items: products, loading: productsLoading } = useSelector((state) => state.products);
+
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
     const [editingProduct, setEditingProduct] = useState(null);
@@ -24,18 +29,20 @@ const AdminProducts = () => {
     const toast = useToast();
 
     useEffect(() => {
-        fetchProducts();
-    }, []);
-
-    const fetchProducts = async () => {
-        try {
-            const { data } = await api.get('/api/products');
-            setProducts(data);
-        } catch (error) {
-            console.error('Failed to fetch products');
-        } finally {
-            setLoading(false);
+        // Optimization: Use cached products if available
+        if (products.length === 0) {
+            dispatch(fetchAllProducts());
         }
+    }, [dispatch, products.length]);
+
+    // Update local loading state
+    useEffect(() => {
+        setLoading(productsLoading);
+    }, [productsLoading]);
+
+    // Force Refresh
+    const handleRefresh = () => {
+        dispatch(fetchAllProducts());
     };
 
     const handleImageSelect = (e) => {
@@ -113,7 +120,10 @@ const AdminProducts = () => {
             setFormData({ name: '', slug: '', description: '', price: '', stock: '', images: [] });
             setImageFiles([]);
             setImagePreviews([]);
-            fetchProducts();
+            setFormData({ name: '', slug: '', description: '', price: '', stock: '', images: [] });
+            setImageFiles([]);
+            setImagePreviews([]);
+            dispatch(fetchAllProducts()); // Refresh Redux state
             toast.success(editingProduct ? 'Product updated successfully' : 'Product created successfully');
         } catch (error) {
             toast.error(error.response?.data?.message || error.message || 'Failed to save product');
@@ -139,7 +149,7 @@ const AdminProducts = () => {
         if (window.confirm('Are you sure you want to delete this product?')) {
             try {
                 await api.delete(`/api/products/${id}`);
-                fetchProducts();
+                dispatch(fetchAllProducts()); // Refresh Redux state
                 toast.success('Product deleted successfully');
             } catch (error) {
                 toast.error('Failed to delete product');

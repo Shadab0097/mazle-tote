@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchMyOrders } from '../store/ordersSlice';
 import api from '../services/api';
 import {
     FiPackage,
@@ -14,8 +16,8 @@ import { Container } from '@/components/ui/Container';
 import { Button } from '@/components/ui/Button';
 
 const MyOrders = () => {
-    const [orders, setOrders] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const dispatch = useDispatch();
+    const { items: orders, loading } = useSelector((state) => state.orders);
 
     // Address Modal State
     const [selectedAddress, setSelectedAddress] = useState(null);
@@ -27,19 +29,11 @@ const MyOrders = () => {
     const [sortOrder, setSortOrder] = useState('Newest');
 
     useEffect(() => {
-        const fetchOrders = async () => {
-            try {
-                const { data } = await api.get('/api/orders/my-orders');
-                console.log('Fetched Orders:', data); // Debugging: Check if product images are present
-                setOrders(data);
-            } catch (err) {
-                console.error('Failed to fetch orders:', err);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchOrders();
-    }, []);
+        // Optimization: Only fetch if we don't have orders yet
+        if (orders.length === 0) {
+            dispatch(fetchMyOrders());
+        }
+    }, [dispatch, orders.length]);
 
     const handleViewAddress = (address) => {
         setSelectedAddress(address);

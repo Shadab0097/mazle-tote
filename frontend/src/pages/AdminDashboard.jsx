@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchDashboardStats } from '../store/adminSlice';
 import api from '../services/api';
 import {
     FiShoppingBag,
@@ -12,8 +14,10 @@ import {
     FiChevronRight,
     FiMail,
     FiSend,
-    FiPrinter
+    FiPrinter,
+    FiRefreshCw
 } from 'react-icons/fi';
+
 import { useToast } from '../context/ToastContext';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -86,17 +90,27 @@ const NewsletterModal = ({ isOpen, onClose }) => {
 
 const AdminDashboard = () => {
     const navigate = useNavigate();
-    const [stats, setStats] = useState({
-        orders: 0,
-        products: 0,
-        revenue: 0,
-        activeUsers: 0,
-        subscribers: 0,
-        ordersChange: '+0%',
-        revenueChange: '+0%'
+    const dispatch = useDispatch();
+    const { stats: adminStats, loading: adminLoading, statsLastFetched, recentOrders: adminRecentOrders } = useSelector((state) => state.admin);
+
+    // Local state (initialized with Redux data if available)
+    const [stats, setStats] = useState(adminStats ? {
+        orders: adminStats.orders,
+        products: adminStats.products,
+        revenue: adminStats.revenue,
+        activeUsers: adminStats.orders > 0 ? 'N/A' : 0,
+        subscribers: adminStats.subscribers,
+        ordersChange: '+12.5%',
+        revenueChange: '+8.2%'
+    } : {
+        orders: 0, products: 0, revenue: 0, activeUsers: 0, subscribers: 0, ordersChange: '+0%', revenueChange: '+0%'
     });
-    const [recentOrders, setRecentOrders] = useState([]);
-    const [loading, setLoading] = useState(true);
+
+    // Initial loading state depends on whether we have data
+    const [loading, setLoading] = useState(!adminStats);
+    const [recentOrders, setRecentOrders] = useState(adminStats?.recentOrders || []);
+
+    // Address Modal State
     const [selectedAddress, setSelectedAddress] = useState(null);
     const [showAddressModal, setShowAddressModal] = useState(false);
     const [showEmailModal, setShowEmailModal] = useState(false);
@@ -105,40 +119,42 @@ const AdminDashboard = () => {
     const [labelOrder, setLabelOrder] = useState(null);
     const [showLabelModal, setShowLabelModal] = useState(false);
 
+    // 1. Fetch Data Effect (Caching Strategy)
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const [ordersRes, productsRes, subscribersRes] = await Promise.all([
-                    api.get('/api/orders'),
-                    api.get('/api/products'),
-                    api.get('/api/subscribers'),
-                ]);
-                const orders = ordersRes.data;
-                const products = productsRes.data;
-                const subscribers = subscribersRes.data;
-                const revenue = orders.reduce((sum, o) => sum + (o.status === 'Paid' || o.status === 'Delivered' ? o.totalAmount : 0), 0);
-                const uniqueUsers = new Set(orders.map(o => o.user?._id)).size;
+        // Fetch only if not present or stale (> 5 mins)
+        const isStale = !statsLastFetched || (Date.now() - statsLastFetched > 5 * 60 * 1000);
 
-                setStats({
-                    orders: orders.length,
-                    products: products.length,
-                    revenue,
-                    activeUsers: uniqueUsers || 0,
-                    subscribers: subscribers.length || 0,
-                    ordersChange: '+12.5%',
-                    revenueChange: '+8.2%'
-                });
+        if (!adminStats || isStale) {
+            dispatch(fetchDashboardStats());
+        } else {
+            setLoading(false);
+        }
+    }, [dispatch, adminStats, statsLastFetched]);
 
-                const sortedOrders = orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                setRecentOrders(sortedOrders.slice(0, 5));
-            } catch (error) {
-                console.error('Failed to fetch dashboard data', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchData();
-    }, []);
+    // 2. Sync Effect (Redux -> Local State)
+    useEffect(() => {
+        if (adminStats) {
+            setStats({
+                orders: adminStats.orders,
+                products: adminStats.products,
+                revenue: adminStats.revenue,
+                activeUsers: adminStats.orders > 0 ? 'N/A' : 0,
+                subscribers: adminStats.subscribers,
+                ordersChange: '+12.5%',
+                revenueChange: '+8.2%'
+            });
+            setRecentOrders(adminStats.recentOrders || []);
+            setLoading(false);
+        }
+    }, [adminStats]);
+
+    const handleRefresh = () => {
+        setLoading(true);
+        dispatch(fetchDashboardStats())
+            .unwrap()
+            .then(() => setLoading(false))
+            .catch(() => setLoading(false));
+    };
 
     const handleViewAddress = (e, address) => {
         e.stopPropagation();
@@ -170,6 +186,14 @@ const AdminDashboard = () => {
         return styles[status] || "bg-gray-100 text-gray-600";
     };
 
+    // Check if order is less than 6 hours old
+    const isNewOrder = (createdAt) => {
+        const orderTime = new Date(createdAt).getTime();
+        const now = Date.now();
+        const sixHours = 6 * 60 * 60 * 1000; // 6 hours in ms
+        return (now - orderTime) < sixHours;
+    };
+
     if (loading) return (
         <div className="flex items-center justify-center h-96">
             <div className="w-10 h-10 border-4 border-[#8ABEE8] border-t-transparent rounded-full animate-spin"></div>
@@ -186,6 +210,9 @@ const AdminDashboard = () => {
                 </div>
                 <Button onClick={() => setShowEmailModal(true)} className="flex items-center gap-2 shadow-lg shadow-[#8ABEE8]/20">
                     <FiMail /> Send Newsletter
+                </Button>
+                <Button onClick={handleRefresh} variant="outline" className="flex items-center gap-2 border-gray-200">
+                    <FiRefreshCw className={loading ? "animate-spin" : ""} /> Refresh
                 </Button>
             </div>
 
@@ -295,7 +322,16 @@ const AdminDashboard = () => {
                             ) : (
                                 recentOrders.map((order) => (
                                     <tr key={order._id} className="group hover:bg-[#F5F8FA] transition-colors border-b border-gray-50 last:border-none cursor-pointer" onClick={() => navigate('/admin/orders')}>
-                                        <td className="py-4 pl-4 font-bold text-[#2C2C2C]">#{order._id.slice(-6).toUpperCase()}</td>
+                                        <td className="py-4 pl-4">
+                                            <div className="flex items-center gap-2">
+                                                <span className="font-bold text-[#2C2C2C]">#{order._id.slice(-6).toUpperCase()}</span>
+                                                {isNewOrder(order.createdAt) && (
+                                                    <span className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-gradient-to-r from-emerald-500 to-teal-400 text-white rounded-full animate-pulse">
+                                                        New
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </td>
                                         <td className="py-4">
                                             <div className="flex items-center gap-3">
                                                 <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center text-xs font-bold text-gray-600">

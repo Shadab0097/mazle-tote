@@ -1,10 +1,54 @@
 
-import React, { useRef } from 'react';
+import React, { useEffect } from 'react';
 import { FiX, FiPrinter } from 'react-icons/fi';
 import { Button } from '@/components/ui/Button';
 
 const ShippingLabelModal = ({ isOpen, onClose, order }) => {
-    const printRef = useRef();
+
+    // Add/remove print styles when modal opens/closes
+    useEffect(() => {
+        if (isOpen) {
+            // Create and inject print styles
+            const style = document.createElement('style');
+            style.id = 'print-label-styles';
+            style.innerHTML = `
+                @media print {
+                    /* Hide everything */
+                    body * {
+                        visibility: hidden !important;
+                    }
+                    /* Show only the printable label and its children */
+                    .printable-label, .printable-label * {
+                        visibility: visible !important;
+                    }
+                    /* Position the label at top-left */
+                    .printable-label {
+                        position: fixed !important;
+                        left: 0 !important;
+                        top: 0 !important;
+                        width: 100mm !important;
+                        height: 150mm !important;
+                        margin: 0 !important;
+                        padding: 5mm !important;
+                        border: none !important;
+                        box-shadow: none !important;
+                        background: white !important;
+                    }
+                    @page {
+                        size: 100mm 150mm;
+                        margin: 0;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+
+            return () => {
+                // Cleanup: remove styles when modal closes
+                const existingStyle = document.getElementById('print-label-styles');
+                if (existingStyle) existingStyle.remove();
+            };
+        }
+    }, [isOpen]);
 
     if (!isOpen || !order) return null;
 
@@ -12,16 +56,9 @@ const ShippingLabelModal = ({ isOpen, onClose, order }) => {
     const companyAddress1 = import.meta.env.VITE_COMPANY_ADDRESS_LINE1 || "123 Sustainable Way";
     const companyAddress2 = import.meta.env.VITE_COMPANY_ADDRESS_LINE2 || "Fashion District, NY 10001";
     const companyPhone = import.meta.env.VITE_COMPANY_PHONE || "+1 (555) 123-4567";
-    const companyEmail = import.meta.env.VITE_COMPANY_EMAIL || "support@mazeltote.com";
 
     const handlePrint = () => {
-        const printContent = printRef.current.innerHTML;
-        const originalContent = document.body.innerHTML;
-
-        document.body.innerHTML = printContent;
         window.print();
-        document.body.innerHTML = originalContent;
-        window.location.reload(); // Reload to restore event listeners
     };
 
     return (
@@ -41,22 +78,8 @@ const ShippingLabelModal = ({ isOpen, onClose, order }) => {
                 {/* Preview Area */}
                 <div className="p-8 overflow-y-auto bg-gray-50 flex-grow flex justify-center">
                     <div
-                        ref={printRef}
-                        className="bg-white w-[100mm] min-h-[150mm] p-6 shadow-sm border border-gray-200 text-black font-sans leading-tight relative"
-                        style={{ pageBreakAfter: 'always' }}
+                        className="printable-label bg-white w-[100mm] min-h-[150mm] p-6 shadow-sm border border-gray-200 text-black font-sans leading-tight relative"
                     >
-                        {/* Print Styles */}
-                        <style>
-                            {`
-                                @media print {
-                                    @page { size: 100mm 150mm; margin: 0; }
-                                    body { margin: 0; padding: 0; background: white; }
-                                    .no-print { display: none !important; }
-                                    .print-container { width: 100mm; height: 150mm; padding: 5mm; border: none; box-shadow: none; }
-                                }
-                            `}
-                        </style>
-
                         {/* Label Content */}
                         <div className="border-[3px] border-black h-full flex flex-col">
                             {/* Header / From */}
@@ -83,7 +106,7 @@ const ShippingLabelModal = ({ isOpen, onClose, order }) => {
                             </div>
 
                             {/* Order Details */}
-                            <div className="p-4 grid grid-cols-2 gap-4 text-sm bg-gray-50/50 print:bg-white">
+                            <div className="p-4 grid grid-cols-2 gap-4 text-sm bg-gray-50/50">
                                 <div>
                                     <div className="font-bold uppercase text-xs text-gray-400">Order ID</div>
                                     <div className="font-mono font-bold">#{order._id.slice(-8).toUpperCase()}</div>
@@ -128,3 +151,4 @@ const ShippingLabelModal = ({ isOpen, onClose, order }) => {
 };
 
 export default ShippingLabelModal;
+

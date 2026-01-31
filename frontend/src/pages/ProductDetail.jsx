@@ -93,6 +93,7 @@ const ProductDetail = () => {
         })
       );
       toast.success(`Added ${product.name} to cart`);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       navigate('/cart');
     }
   };
@@ -157,7 +158,7 @@ const ProductDetail = () => {
                       : 'border-transparent hover:border-gray-200'
                       }`}
                   >
-                    <img src={img} alt="" className="w-full h-full object-cover" />
+                    <img src={img} alt="" className="w-full h-full object-cover" loading="lazy" decoding="async" />
                   </button>
                 ))}
               </div>
@@ -205,7 +206,7 @@ const ProductDetail = () => {
             <div className="mt-auto space-y-8">
               <div className="flex flex-col md:flex-row gap-6">
                 {/* Quantity */}
-                <div className="flex items-center border border-gray-200 rounded-full px-4 h-14 w-full md:w-auto justify-between md:justify-start">
+                <div className="flex items-center border border-gray-200 rounded-full px-4 h-10 sm:h-14 w-full md:w-auto justify-between md:justify-start">
                   <button
                     onClick={() => handleQuantity('minus')}
                     className="p-2 hover:text-[var(--color-primary)] transition-colors"
@@ -225,7 +226,7 @@ const ProductDetail = () => {
                 <button
                   onClick={handleAddToCart}
                   disabled={product.stock === 0}
-                  className="flex-1 bg-[var(--color-text)] text-white rounded-full font-bold text-lg h-16 md:h-14 px-12 hover:bg-[var(--color-primary)] hover:shadow-lg hover:shadow-[var(--color-primary)]/30 transition-all duration-300 active:scale-95 flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed w-full md:w-auto"
+                  className="flex-1 bg-[var(--color-text)] text-white rounded-full font-bold text-lg h-16 md:h-14 px-12 py-3 sm:py-4 md:py-0 hover:bg-[var(--color-primary)] hover:shadow-lg hover:shadow-[var(--color-primary)]/30 transition-all duration-300 active:scale-95 flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed w-full md:w-auto"
                 >
                   <FiShoppingBag size={20} />
                   Add to Cart

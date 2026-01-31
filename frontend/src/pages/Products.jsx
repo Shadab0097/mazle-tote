@@ -14,6 +14,8 @@ const ProductCard = ({ product, onAddToCart }) => (
         <img
           src={product.images[0]}
           alt={product.name}
+          loading="lazy"
+          decoding="async"
           className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
         />
       ) : (
@@ -72,8 +74,11 @@ const Products = () => {
   const [filteredProducts, setFilteredProducts] = useState([]);
 
   useEffect(() => {
-    dispatch(fetchProducts());
-  }, [dispatch]);
+    // Optimization: Only fetch if we don't have products yet
+    if (products.length === 0) {
+      dispatch(fetchProducts());
+    }
+  }, [dispatch, products.length]);
 
   useEffect(() => {
     const lowerQuery = searchQuery.toLowerCase();
@@ -96,6 +101,7 @@ const Products = () => {
         quantity: 1,
       })
     );
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     navigate('/cart');
   };
 

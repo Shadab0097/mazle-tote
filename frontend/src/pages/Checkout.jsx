@@ -60,9 +60,15 @@ const Checkout = () => {
         firstName: '', lastName: '', email: '', phone: '', address: '', city: '', state: '', zip: ''
     });
 
+    // ============ SHIPPING CONFIGURATION ============
+    // Set FREE_SHIPPING to false and adjust SHIPPING_COST to enable charges
+    const FREE_SHIPPING = true;  // Toggle: true = always free, false = charges apply
+    const SHIPPING_COST = 15;    // Cost when not free (in USD)
+    // ================================================
+
     // Calculations
     const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    const shippingCost = 0;
+    const shippingCost = FREE_SHIPPING ? 0 : SHIPPING_COST;
     const donation = subtotal * 0.10;
     const total = subtotal + shippingCost;
 

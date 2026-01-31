@@ -12,6 +12,7 @@ import {
 } from 'react-icons/fi';
 import api from '../services/api';
 import { logoutUser } from '../store/authSlice';
+import { fetchMyOrders } from '../store/ordersSlice';
 import { Container } from '@/components/ui/Container';
 import { useToast } from '../context/ToastContext';
 
@@ -22,26 +23,19 @@ const Profile = () => {
     const toast = useToast();
 
     const [activeTab, setActiveTab] = useState('orders');
-    const [orders, setOrders] = useState([]);
-    const [loading, setLoading] = useState(true);
+    // Use Redux state for orders
+    const { items: orders, loading } = useSelector((state) => state.orders);
 
     // Address Modal State
     const [selectedAddress, setSelectedAddress] = useState(null);
     const [showAddressModal, setShowAddressModal] = useState(false);
 
     useEffect(() => {
-        const fetchOrders = async () => {
-            try {
-                const { data } = await api.get('/api/orders/my-orders');
-                setOrders(data);
-            } catch (err) {
-                console.error('Failed to fetch orders:', err);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchOrders();
-    }, []);
+        // Optimization: Only fetch if we don't have orders yet
+        if (orders.length === 0) {
+            dispatch(fetchMyOrders());
+        }
+    }, [dispatch, orders.length]);
 
     const handleLogout = () => {
         dispatch(logoutUser());
@@ -188,28 +182,27 @@ const Profile = () => {
                     </div>
                 ) : (
                     <div className="max-w-2xl mx-auto bg-white rounded-[2.5rem] shadow-xl p-8 md:p-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                        <h2 className="text-2xl font-bold text-[#2C2C2C] mb-8">Edit Details</h2>
-                        <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+                        <h2 className="text-2xl font-bold text-[#2C2C2C] mb-8">Personal Details</h2>
+                        <form className="space-y-6">
                             <div className="space-y-2">
                                 <label className="text-xs font-bold text-[#2C2C2C] uppercase ml-1">Full Name</label>
                                 <input
                                     type="text"
-                                    defaultValue={user.name}
-                                    className="w-full bg-[#F5F8FA] border border-transparent focus:border-[#8ABEE8] px-5 py-3 rounded-xl outline-none transition-colors text-sm font-medium"
+                                    value={user.name}
+                                    readOnly
+                                    className="w-full bg-gray-50 border border-transparent px-5 py-3 rounded-xl outline-none text-gray-500 text-sm font-medium cursor-not-allowed"
                                 />
                             </div>
                             <div className="space-y-2">
                                 <label className="text-xs font-bold text-[#2C2C2C] uppercase ml-1">Email Address</label>
                                 <input
                                     type="email"
-                                    defaultValue={user.email}
-                                    className="w-full bg-[#F5F8FA] border border-transparent focus:border-[#8ABEE8] px-5 py-3 rounded-xl outline-none transition-colors text-sm font-medium"
+                                    value={user.email}
+                                    readOnly
+                                    className="w-full bg-gray-50 border border-transparent px-5 py-3 rounded-xl outline-none text-gray-500 text-sm font-medium cursor-not-allowed"
                                 />
                             </div>
-                            {/* Phone field removed as it's not in the default user schema */}
-                            <button onClick={() => toast.success('Profile updated successfully!')} className="w-full bg-[#2C2C2C] text-white font-bold py-4 rounded-xl hover:bg-[#8ABEE8] transition-colors mt-4">
-                                Save Changes
-                            </button>
+
                         </form>
                     </div>
                 )}

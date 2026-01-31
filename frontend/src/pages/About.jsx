@@ -20,7 +20,7 @@ const About = () => {
                             {/* Main Tall Image */}
                             <div className="relative z-10 rounded-[2.5rem] overflow-hidden shadow-2xl w-full max-w-md mx-auto lg:mx-0 border-8 border-white">
                                 <img
-                                    src="https://images.unsplash.com/photo-1556905055-8f358a7a47b2?q=80&w=1740&auto=format&fit=crop"
+                                    src="/Tu-Bav-Tote.png"
                                     alt="Artisan working on bag"
                                     className="w-full h-[500px] lg:h-[650px] object-cover hover:scale-105 transition-transform duration-700"
                                 />
@@ -34,7 +34,7 @@ const About = () => {
                             {/* Floating Offset Image */}
                             <div className="hidden lg:block absolute -bottom-12 -right-12 w-72 h-72 rounded-[2.5rem] overflow-hidden shadow-2xl border-8 border-white z-20 hover:-translate-y-2 transition-transform duration-500">
                                 <img
-                                    src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=1740&auto=format&fit=crop"
+                                    src="/hamsa-harmony.png"
                                     alt="Raw materials"
                                     className="w-full h-full object-cover"
                                 />
