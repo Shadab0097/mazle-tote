@@ -86,7 +86,7 @@ const Hero = () => {
                     <div className="lg:w-1/2 relative order-1 lg:order-2 w-full max-w-md lg:max-w-none mx-auto lg:pr-12">
                         <div className="relative z-10 rounded-3xl overflow-hidden shadow-2xl transform rotate-2 hover:rotate-0 transition-all duration-700 ease-out border-4 lg:border-8 border-white bg-gray-100">
                             <img
-                                src="https://images.unsplash.com/photo-1590874103328-eac38a683ce7?q=80&w=1676&auto=format&fit=crop"
+                                src="/hero.png"
                                 alt="Mazel Tote Bag Model"
                                 className="w-full h-[400px] lg:h-[600px] object-cover"
                             />
@@ -94,7 +94,7 @@ const Hero = () => {
                             {/* Floating Badge */}
                             <div className="absolute bottom-6 right-6 lg:bottom-8 lg:right-8 bg-white/90 backdrop-blur px-4 py-3 lg:px-6 lg:py-4 rounded-xl lg:rounded-2xl shadow-xl max-w-[180px] lg:max-w-xs">
                                 <p className="font-bold text-[var(--color-text)] text-sm lg:text-base">The Classic Shopper</p>
-                                <p className="text-xs lg:text-sm text-[var(--color-primary)] font-semibold">$45.00</p>
+                                <p className="text-xs lg:text-sm text-[var(--color-primary)] font-semibold">$20.00</p>
                             </div>
                         </div>
                         {/* Decorative Element behind image */}
