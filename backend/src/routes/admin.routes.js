@@ -86,7 +86,7 @@ router.get('/dashboard-stats', protectAdmin, async (req, res) => {
                 .sort({ createdAt: -1 })
                 .limit(5)
                 .populate('user', 'name email')
-                .select('_id user totalAmount status createdAt shippingAddress') // Select only needed fields
+                .select('_id user totalAmount status createdAt shippingAddress items') // Select only needed fields
         ]);
 
         res.json({

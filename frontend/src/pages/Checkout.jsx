@@ -408,7 +408,7 @@ const Checkout = () => {
                                     <div>
                                         <h3 className="text-xl font-bold text-[#2C2C2C]">Everything looks good!</h3>
                                         <p className="text-gray-500 mt-2 max-w-md mx-auto">
-                                            You are about to donate <strong>${donation.toFixed(2)}</strong> to <span className="text-[#8ABEE8] font-bold">{CHARITIES.find(c => c.id === selectedCharity)?.name}</span> with this purchase.
+                                            You are about to donate <strong>100%</strong> to <span className="text-[#8ABEE8] font-bold">{CHARITIES.find(c => c.id === selectedCharity)?.name}</span> with this purchase.
                                         </p>
                                     </div>
                                 </div>
