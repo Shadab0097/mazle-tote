@@ -47,8 +47,8 @@ const Contact = () => {
                                     <span className="w-2 h-2 rounded-full bg-[#8ABEE8] animate-pulse"></span> Get in Touch
                                 </div>
                                 <h2 className="text-5xl lg:text-7xl font-extrabold leading-[1.1] mb-6">
-                                    Let's Craft <br />
-                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8ABEE8] to-[#5fa3db]">Something New.</span>
+                                    Questions? <br />
+                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8ABEE8] to-[#5fa3db]">Let's Chat.</span>
                                 </h2>
                                 <p className="text-xl text-gray-500 font-light leading-relaxed">
                                     Have a question about our materials, shipping, or just want to say hello? We're here to listen.
@@ -73,7 +73,7 @@ const Contact = () => {
                                     </div>
                                     <div>
                                         <h4 className="text-lg font-bold mb-1">Customer Care</h4>
-                                        <p className="text-gray-500">hello@mazeltote.com</p>
+                                        <p className="text-gray-500">support@mazeltote.com</p>
                                     </div>
                                 </div>
                             </div>

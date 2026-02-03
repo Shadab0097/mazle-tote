@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { removeFromCart, updateQuantity } from '../store/cartSlice';
@@ -6,20 +7,18 @@ import {
   FiPlus,
   FiX,
   FiArrowRight,
-  FiShoppingBag
+  FiShoppingBag,
+  FiUser,
+  FiMail
 } from 'react-icons/fi';
 import { Container } from '@/components/ui/Container';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
-import { Input } from '@/components/ui/Input';
 import { useToast } from '../context/ToastContext';
 
-// ============ SHIPPING CONFIGURATION ============
-// Set FREE_SHIPPING to false and adjust SHIPPING_COST/FREE_SHIPPING_THRESHOLD to enable charges
-const FREE_SHIPPING = true;  // Toggle: true = always free, false = charges apply
-const SHIPPING_COST = 15;    // Cost when not free (in USD)
-const FREE_SHIPPING_THRESHOLD = 75; // Orders above this get free shipping (when FREE_SHIPPING is false)
-// ================================================
+// ============ SHIPPING CONFIGURATION (from .env) ============
+const SHIPPING_COST = parseFloat(import.meta.env.VITE_SHIPPING_COST) || 0;
+// ============================================================
 
 const Cart = () => {
   const navigate = useNavigate();
@@ -27,18 +26,28 @@ const Cart = () => {
   const { items } = useSelector((state) => state.cart);
   const { isAuthenticated } = useSelector((state) => state.auth);
   const toast = useToast();
+  const [showCheckoutModal, setShowCheckoutModal] = useState(false);
 
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  // Shipping logic: Free if FREE_SHIPPING is true, otherwise based on threshold
-  const shipping = FREE_SHIPPING ? 0 : (subtotal > FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST);
+  const shipping = SHIPPING_COST;
   const total = subtotal + shipping;
 
   const handleCheckout = () => {
-    if (!isAuthenticated) {
-      navigate('/login');
-    } else {
+    if (isAuthenticated) {
       navigate('/checkout');
+    } else {
+      setShowCheckoutModal(true);
     }
+  };
+
+  const handleGuestCheckout = () => {
+    setShowCheckoutModal(false);
+    navigate('/checkout?guest=true');
+  };
+
+  const handleLoginRedirect = () => {
+    setShowCheckoutModal(false);
+    navigate('/login', { state: { from: '/cart' } });
   };
 
   if (items.length === 0) {
@@ -137,6 +146,67 @@ const Cart = () => {
           </div>
         </div>
       </Container>
+
+      {/* Guest Checkout Modal */}
+      {showCheckoutModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-white rounded-3xl w-full max-w-md p-8 shadow-2xl relative animate-in zoom-in-95">
+            <button
+              onClick={() => setShowCheckoutModal(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 p-2"
+            >
+              <FiX size={20} />
+            </button>
+
+            <div className="text-center mb-8">
+              <div className="w-16 h-16 bg-[#8ABEE8]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <FiShoppingBag className="w-8 h-8 text-[#8ABEE8]" />
+              </div>
+              <h3 className="text-2xl font-bold text-[#2C2C2C] mb-2">How would you like to checkout?</h3>
+              <p className="text-gray-500 text-sm">Choose an option to continue</p>
+            </div>
+
+            <div className="space-y-4">
+              {/* Login Option */}
+              <button
+                onClick={handleLoginRedirect}
+                className="w-full flex items-center gap-4 p-4 rounded-2xl border-2 border-gray-100 hover:border-[#8ABEE8] hover:bg-[#8ABEE8]/5 transition-all group"
+              >
+                <div className="w-12 h-12 bg-[#2C2C2C] rounded-xl flex items-center justify-center group-hover:bg-[#8ABEE8] transition-colors">
+                  <FiUser className="w-5 h-5 text-white" />
+                </div>
+                <div className="text-left flex-1">
+                  <h4 className="font-bold text-[#2C2C2C]">Login or Register</h4>
+                  <p className="text-xs text-gray-500">Track orders, save addresses, faster checkout</p>
+                </div>
+                <FiArrowRight className="text-gray-400 group-hover:text-[#8ABEE8]" />
+              </button>
+
+              {/* Guest Option */}
+              <button
+                onClick={handleGuestCheckout}
+                className="w-full flex items-center gap-4 p-4 rounded-2xl border-2 border-gray-100 hover:border-[#8ABEE8] hover:bg-[#8ABEE8]/5 transition-all group"
+              >
+                <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center group-hover:bg-[#8ABEE8]/20 transition-colors">
+                  <FiMail className="w-5 h-5 text-gray-600" />
+                </div>
+                <div className="text-left flex-1">
+                  <h4 className="font-bold text-[#2C2C2C]">Continue as Guest</h4>
+                  <p className="text-xs text-gray-500">Quick checkout, receive updates via email</p>
+                </div>
+                <FiArrowRight className="text-gray-400 group-hover:text-[#8ABEE8]" />
+              </button>
+            </div>
+
+            {/* Disclaimer */}
+            <div className="mt-6 p-4 bg-amber-50 rounded-xl border border-amber-100">
+              <p className="text-xs text-amber-800 leading-relaxed">
+                <strong>Note:</strong> Guest checkout orders won't appear in your account, but you'll receive order confirmation and shipping updates via email.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

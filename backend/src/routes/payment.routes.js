@@ -148,6 +148,224 @@ router.post('/paypal/create-order', protect, async (req, res) => {
     }
 });
 
+// @desc    Create a PayPal Order for Guest Checkout
+// @route   POST /api/payment/paypal/guest/create-order
+// @access  Public
+router.post('/paypal/guest/create-order', async (req, res) => {
+    try {
+        const { orderId, guestEmail } = req.body;
+
+        if (!orderId) {
+            return res.status(400).json({ message: 'Order ID is required' });
+        }
+
+        const order = await Order.findById(orderId);
+        if (!order) {
+            return res.status(404).json({ message: 'Order not found' });
+        }
+
+        // Verify this is a guest order and email matches
+        if (!order.guestEmail || order.guestEmail !== guestEmail) {
+            return res.status(401).json({ message: 'Not authorized - email mismatch' });
+        }
+
+        // Check if order is already paid
+        if (order.status === 'Paid') {
+            return res.status(400).json({ message: 'Order is already paid' });
+        }
+
+        // Check if order is expired
+        if (order.expiresAt && new Date() > order.expiresAt) {
+            order.status = 'Cancelled';
+            await order.save();
+            return res.status(400).json({ message: 'Order has expired. Please create a new order.' });
+        }
+
+        // DUPLICATE PREVENTION: Check if order already has a valid PayPal order
+        if (order.paypalOrderId) {
+            try {
+                const existingPayPalOrder = await getPayPalOrderDetails(order.paypalOrderId);
+                if (existingPayPalOrder.status === 'CREATED' || existingPayPalOrder.status === 'APPROVED') {
+                    return res.status(200).json(existingPayPalOrder);
+                }
+                if (existingPayPalOrder.status === 'COMPLETED') {
+                    order.status = 'Paid';
+                    order.payment.status = 'Completed';
+                    order.payment.paymentId = existingPayPalOrder.id;
+                    await order.save();
+                    return res.status(400).json({ message: 'Order is already paid' });
+                }
+            } catch (e) {
+                console.log(`Previous PayPal order ${order.paypalOrderId} invalid, creating new one`);
+            }
+        }
+
+        const totalAmount = order.totalAmount.toFixed(2);
+        const accessToken = await generateAccessToken();
+        const url = `${base}/v2/checkout/orders`;
+        const payload = {
+            intent: 'CAPTURE',
+            purchase_units: [
+                {
+                    amount: {
+                        currency_code: currency,
+                        value: totalAmount,
+                    },
+                    reference_id: order._id.toString(),
+                },
+            ],
+        };
+
+        const response = await axios.post(url, payload, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+
+        order.paypalOrderId = response.data.id;
+        order.paymentAttempts = (order.paymentAttempts || 0) + 1;
+        await order.save();
+
+        res.status(201).json(response.data);
+    } catch (error) {
+        console.error('Error creating guest PayPal order:', error.response?.data || error.message);
+        res.status(500).json({ error: 'Failed to create PayPal order', details: error.response?.data });
+    }
+});
+
+// @desc    Capture a PayPal Order for Guest Checkout
+// @route   POST /api/payment/paypal/guest/capture-order
+// @access  Public
+router.post('/paypal/guest/capture-order', async (req, res) => {
+    try {
+        const { orderID, guestEmail } = req.body;
+
+        if (!orderID) {
+            return res.status(400).json({ message: 'PayPal Order ID is required' });
+        }
+
+        let paypalOrderDetails;
+        try {
+            paypalOrderDetails = await getPayPalOrderDetails(orderID);
+        } catch (e) {
+            return res.status(400).json({ message: 'Invalid PayPal order ID' });
+        }
+
+        const localOrderId = paypalOrderDetails.purchase_units?.[0]?.reference_id;
+        if (!localOrderId) {
+            return res.status(400).json({ message: 'Could not find local order reference' });
+        }
+
+        const order = await Order.findById(localOrderId);
+        if (!order) {
+            return res.status(404).json({ message: 'Local order not found' });
+        }
+
+        // Verify this is a guest order and email matches
+        if (!order.guestEmail || order.guestEmail !== guestEmail) {
+            return res.status(401).json({ message: 'Not authorized - email mismatch' });
+        }
+
+        // DUPLICATE PAYMENT PREVENTION
+        if (order.status === 'Paid') {
+            return res.status(200).json({
+                message: 'Order already paid',
+                status: 'COMPLETED',
+                orderId: order._id,
+                paymentId: order.payment.paymentId
+            });
+        }
+
+        if (paypalOrderDetails.status === 'COMPLETED') {
+            order.status = 'Paid';
+            order.payment = { method: 'PayPal', paymentId: orderID, status: 'Completed' };
+            await order.save();
+            return res.json(paypalOrderDetails);
+        }
+
+        // Capture the payment
+        const accessToken = await generateAccessToken();
+        const url = `${base}/v2/checkout/orders/${orderID}/capture`;
+
+        const response = await axios.post(url, {}, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+
+        const capturedOrder = response.data;
+
+        if (capturedOrder.status === 'COMPLETED') {
+            order.status = 'Paid';
+            order.payment = { method: 'PayPal', paymentId: capturedOrder.id, status: 'Completed' };
+            await order.save();
+
+            // Decrement stock
+            try {
+                for (const item of order.items) {
+                    const productModel = await Product.findById(item.product);
+                    if (productModel) {
+                        productModel.stock = Math.max(0, productModel.stock - item.quantity);
+                        await productModel.save();
+                    }
+                }
+            } catch (stockError) {
+                console.error('Failed to update stock:', stockError);
+            }
+
+            // Send email to guest
+            (async () => {
+                try {
+                    const itemsList = order.items.map(item =>
+                        `<li>${item.name} x ${item.quantity} - $${item.price.toFixed(2)}</li>`
+                    ).join('');
+
+                    const emailMessage = `
+                        <h1>Order Confirmed!</h1>
+                        <p>Thank you for your purchase from Mazel Tote.</p>
+                        <p><strong>Order ID:</strong> ${order._id}</p>
+                        <p><strong>Total:</strong> $${order.totalAmount.toFixed(2)}</p>
+                        <h3>Items:</h3>
+                        <ul>${itemsList}</ul>
+                        <p>We will notify you when your order ships.</p>
+                    `;
+
+                    await sendEmail({
+                        email: order.guestEmail,
+                        subject: 'Order Confirmation - Mazel Tote',
+                        html: emailMessage
+                    });
+
+                    // Admin notification
+                    const adminEmail = process.env.ADMIN_EMAIL;
+                    if (adminEmail) {
+                        await sendEmail({
+                            email: adminEmail,
+                            subject: `New Guest Order - ${order._id}`,
+                            html: `<h1>New Guest Order</h1><p>Email: ${order.guestEmail}</p><p>Total: $${order.totalAmount.toFixed(2)}</p>`
+                        });
+                    }
+                } catch (emailError) {
+                    console.error('Failed to send guest email:', emailError);
+                }
+            })();
+
+        } else {
+            order.status = 'PaymentFailed';
+            order.payment.status = capturedOrder.status;
+            await order.save();
+            return res.status(400).json({ message: 'Payment not completed', details: capturedOrder });
+        }
+
+        res.json(capturedOrder);
+    } catch (error) {
+        console.error('Error capturing guest PayPal order:', error.response?.data || error.message);
+        res.status(500).json({ error: 'Failed to capture PayPal order', details: error.response?.data });
+    }
+});
+
 // @desc    Capture a PayPal Order
 // @route   POST /api/payment/paypal/capture-order
 // @access  Private

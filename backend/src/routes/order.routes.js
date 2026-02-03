@@ -55,6 +55,65 @@ router.post('/', protect, async (req, res) => {
     }
 });
 
+// @desc    Create new guest order (no authentication required)
+// @route   POST /api/orders/guest
+// @access  Public
+router.post('/guest', async (req, res) => {
+    try {
+        const { items, shippingAddress, payment, totalAmount, charityTrust, guestEmail } = req.body;
+
+        if (items && items.length === 0) {
+            res.status(400);
+            throw new Error('No order items');
+        }
+
+        if (!guestEmail) {
+            res.status(400);
+            throw new Error('Email is required for guest checkout');
+        }
+
+        // Basic email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(guestEmail)) {
+            res.status(400);
+            throw new Error('Please provide a valid email address');
+        }
+
+        if (!charityTrust) {
+            res.status(400);
+            throw new Error('Please select a charity trust');
+        }
+
+        const validTrusts = [
+            'Green Earth Foundation',
+            'Children Education Trust',
+            'Animal Welfare Society',
+            'StandWithUs',
+            'Combat Campus Antisemitism',
+            'Blue Square Alliance'
+        ];
+        if (!validTrusts.includes(charityTrust)) {
+            res.status(400);
+            throw new Error('Invalid charity trust selected');
+        }
+
+        const order = new Order({
+            guestEmail,
+            items,
+            shippingAddress,
+            charityTrust,
+            payment,
+            totalAmount,
+        });
+
+        const createdOrder = await order.save();
+        res.status(201).json(createdOrder);
+    } catch (error) {
+        const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
+        res.status(statusCode).json({ message: error.message });
+    }
+});
+
 // @desc    Get logged in user orders
 // @route   GET /api/orders/my-orders
 // @access  Private (User)

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback, memo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { fetchProducts } from '@/store/productSlice';
@@ -36,7 +36,7 @@ const Hero = () => {
                         </div>
 
                         <h1 className="text-5xl lg:text-7xl font-extrabold text-[var(--color-text)] leading-[1.1]">
-                            Carry Content, <br />
+                            Carry Hope, <br />
                             <span className="font-serif italic text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-primary)] to-blue-400">
                                 Create Impact.
                             </span>
@@ -148,7 +148,7 @@ const MeetFounder = () => {
                         <div className="absolute inset-0 bg-[var(--color-primary)]/10 rounded-[2rem] transform rotate-3 scale-105 -z-10"></div>
                         <div className="relative rounded-[2rem] overflow-hidden shadow-2xl border-4 border-white">
                             <img
-                                src="/founder.jpg"
+                                src="/founder.png"
                                 alt="Brielle Harbur - Founder"
                                 className="w-full h-auto object-cover transform hover:scale-105 transition-transform duration-700"
                             />
@@ -324,9 +324,9 @@ const Marquee = () => {
             <div className="flex gap-8 items-center animate-marquee whitespace-nowrap text-white font-bold tracking-wider">
                 {[...Array(10)].map((_, i) => (
                     <React.Fragment key={i}>
-                        <span>SUSTAINABLE FASHION</span>
+                        <span>TIKKUN OLAM</span>
                         <span className="w-2 h-2 bg-white rounded-full"></span>
-                        <span>MAZEL TOTE</span>
+                        <span>LET'S REPAIR THE WORLD</span>
                         <span className="w-2 h-2 bg-white rounded-full"></span>
                     </React.Fragment>
                 ))}
@@ -336,7 +336,7 @@ const Marquee = () => {
 };
 
 // --- Product Card Component ---
-const ProductCardComponent = ({ product, onAddToCart }) => (
+const ProductCardComponent = memo(({ product, onAddToCart }) => (
     <div className="w-full h-full group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 flex flex-col">
         <div className="relative overflow-hidden aspect-[4/5]">
             {product.images?.[0] ? (
@@ -352,6 +352,16 @@ const ProductCardComponent = ({ product, onAddToCart }) => (
                     No Image
                 </div>
             )}
+
+            {/* Animated Hanging Pre-Order Badge */}
+            <div className="absolute -top-1 right-4 z-20 animate-sway origin-top">
+                <div className="bg-[var(--color-primary)] text-white w-16 h-24 shadow-lg flex flex-col items-center justify-center p-2 clip-path-badge before:absolute before:inset-0 before:bg-gradient-to-b before:from-white/20 before:to-transparent">
+                    <span className="text-[7px] font-black uppercase tracking-tight mb-1 leading-tight text-center opacity-90 border-b border-white/20 pb-1 mb-1 w-full">Coming<br />Soon</span>
+                    <span className="text-[10px] font-bold uppercase tracking-widest mb-0 opacity-80">Pre</span>
+                    <span className="text-xs font-extrabold uppercase tracking-wider relative z-10">Order</span>
+                    <div className="w-1.5 h-1.5 bg-white/50 rounded-full mt-1.5 shadow-inner"></div>
+                </div>
+            </div>
 
             {/* Tag - Logic could be expanded */}
             {product.stock < 5 && (
@@ -384,7 +394,7 @@ const ProductCardComponent = ({ product, onAddToCart }) => (
             </div>
         </div>
     </div>
-);
+));
 
 const Home = () => {
     const dispatch = useDispatch();
@@ -398,7 +408,7 @@ const Home = () => {
         }
     }, [dispatch, products.length]);
 
-    const handleAddToCart = (product) => {
+    const handleAddToCart = useCallback((product) => {
         dispatch(addToCart({
             product: product._id,
             name: product.name,
@@ -408,7 +418,7 @@ const Home = () => {
         }));
         window.scrollTo({ top: 0, behavior: 'smooth' });
         navigate('/cart');
-    };
+    }, [dispatch, navigate]);
 
     // Use specific products if available, otherwise fallback
     const featuredProducts = products.slice(0, 3);

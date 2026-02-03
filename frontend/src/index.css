@@ -49,6 +49,20 @@
   }
 
   --animate-spin-slow: spin 8s linear infinite;
+
+  --animate-sway: sway 3s ease-in-out infinite;
+
+  @keyframes sway {
+
+    0%,
+    100% {
+      transform: rotate(-5deg);
+    }
+
+    50% {
+      transform: rotate(5deg);
+    }
+  }
 }
 
 @layer base {
@@ -78,14 +92,15 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
   h6 {
     font-family: var(--font-heading);
     font-weight: 700;
     letter-spacing: -0.01em;
+  }
+}
+
+@layer utilities {
+  .clip-path-badge {
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 50% 85%, 0% 100%);
   }
 }

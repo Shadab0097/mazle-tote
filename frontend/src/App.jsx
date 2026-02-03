@@ -12,24 +12,24 @@ import { ProtectedRoute, AdminRoute, GuestRoute } from './components/ProtectedRo
 
 // Public Pages
 import Home from './pages/Home';
-import About from './pages/About';
-import Contact from './pages/Contact';
-import Privacy from './pages/Privacy';
-import Products from './pages/Products';
-import ProductDetail from './pages/ProductDetail';
+const About = lazy(() => import('./pages/About'));
+const Contact = lazy(() => import('./pages/Contact'));
+const Privacy = lazy(() => import('./pages/Privacy'));
+const Products = lazy(() => import('./pages/Products'));
+const ProductDetail = lazy(() => import('./pages/ProductDetail'));
 
 // Auth Pages
-import Login from './pages/Login';
-import Register from './pages/Register';
-import ForgotPassword from './pages/ForgotPassword';
-import ResetPassword from './pages/ResetPassword';
-import AdminLogin from './pages/AdminLogin';
+const Login = lazy(() => import('./pages/Login'));
+const Register = lazy(() => import('./pages/Register'));
+const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
+const ResetPassword = lazy(() => import('./pages/ResetPassword'));
+const AdminLogin = lazy(() => import('./pages/AdminLogin'));
 
 // User Pages
-import Cart from './pages/Cart';
-import Checkout from './pages/Checkout';
-import Profile from './pages/Profile';
-import MyOrders from './pages/MyOrders';
+const Cart = lazy(() => import('./pages/Cart'));
+const Checkout = lazy(() => import('./pages/Checkout'));
+const Profile = lazy(() => import('./pages/Profile'));
+const MyOrders = lazy(() => import('./pages/MyOrders'));
 
 // Admin Pages (Lazy Loaded)
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
@@ -95,11 +95,13 @@ function AppRoutes() {
             <Route path="/reset-password/:resetToken" element={<ResetPassword />} />
           </Route>
 
+          {/* Checkout - accessible by both logged-in users and guests */}
+          <Route path="/checkout" element={<Checkout />} />
+
           {/* Protected User Routes */}
           <Route element={<ProtectedRoute />}>
             <Route path="/profile" element={<Profile />} />
             <Route path="/my-orders" element={<MyOrders />} />
-            <Route path="/checkout" element={<Checkout />} />
           </Route>
         </Route>
 

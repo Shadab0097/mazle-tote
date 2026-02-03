@@ -16,7 +16,7 @@ const About = () => {
                     <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
 
                         {/* Left: Artistic Image Composition */}
-                        <div className="lg:w-1/2 relative">
+                        <div className="lg:w-1/2 relative mb-16 lg:mb-0">
                             {/* Main Tall Image */}
                             <div className="relative z-10 rounded-[2.5rem] overflow-hidden shadow-2xl w-full max-w-md mx-auto lg:mx-0 border-8 border-white">
                                 <img
@@ -26,16 +26,16 @@ const About = () => {
                                 />
                                 {/* Overlay Content */}
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex flex-col justify-end p-8 text-white">
-                                    <span className="font-bold text-[var(--color-primary)] uppercase tracking-widest text-xs mb-2">Established 2024</span>
-                                    <p className="font-light italic text-lg opacity-90 leading-relaxed">"Quality is never an accident; it is always the result of high intention."</p>
+                                    <span className="font-bold text-[var(--color-primary)] uppercase tracking-widest text-xs mb-2">Established 2026</span>
+                                    <p className="font-light italic text-lg opacity-90 leading-relaxed">"Exclusively designed by a 12-year-old girl located in Boca Raton, FL."</p>
                                 </div>
                             </div>
 
-                            {/* Floating Offset Image */}
-                            <div className="hidden lg:block absolute -bottom-12 -right-12 w-72 h-72 rounded-[2.5rem] overflow-hidden shadow-2xl border-8 border-white z-20 hover:-translate-y-2 transition-transform duration-500">
+                            {/* Floating Offset Image - overlay hanging on mobile with space reserved below */}
+                            <div className="absolute -bottom-8 -right-2 lg:-bottom-12 lg:-right-12 w-32 h-32 lg:w-72 lg:h-72 rounded-[1.5rem] lg:rounded-[2.5rem] overflow-hidden shadow-2xl border-4 lg:border-8 border-white z-20 hover:-translate-y-2 transition-transform duration-500">
                                 <img
-                                    src="/hamsa-harmony.png"
-                                    alt="Raw materials"
+                                    src="/founder-story.png"
+                                    alt="Founder designing"
                                     className="w-full h-full object-cover"
                                 />
                             </div>

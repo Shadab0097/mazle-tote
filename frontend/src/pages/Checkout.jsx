@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { setCharityTrust, clearCart } from '../store/cartSlice';
 import api from '../services/api';
@@ -46,6 +46,8 @@ const CHARITIES = [
 
 const Checkout = () => {
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const isGuestCheckout = searchParams.get('guest') === 'true';
     const dispatch = useDispatch();
     const { items, charityTrust } = useSelector((state) => state.cart);
     const toast = useToast();
@@ -60,15 +62,13 @@ const Checkout = () => {
         firstName: '', lastName: '', email: '', phone: '', address: '', city: '', state: '', zip: ''
     });
 
-    // ============ SHIPPING CONFIGURATION ============
-    // Set FREE_SHIPPING to false and adjust SHIPPING_COST to enable charges
-    const FREE_SHIPPING = true;  // Toggle: true = always free, false = charges apply
-    const SHIPPING_COST = 15;    // Cost when not free (in USD)
-    // ================================================
+    // ============ SHIPPING CONFIGURATION (from .env) ============
+    const SHIPPING_COST = parseFloat(import.meta.env.VITE_SHIPPING_COST) || 0;
+    // ============================================================
 
     // Calculations
     const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    const shippingCost = FREE_SHIPPING ? 0 : SHIPPING_COST;
+    const shippingCost = SHIPPING_COST;
     const donation = subtotal * 0.10;
     const total = subtotal + shippingCost;
 
@@ -135,14 +135,24 @@ const Checkout = () => {
                 totalAmount: total,
             };
 
-            // 1. Create local order in our DB
-            const { data: order } = await api.post('/api/orders', orderData);
+            // Add guest email if guest checkout
+            if (isGuestCheckout) {
+                orderData.guestEmail = shippingAddress.email;
+            }
+
+            // 1. Create local order in our DB (use guest endpoint if guest checkout)
+            const endpoint = isGuestCheckout ? '/api/orders/guest' : '/api/orders';
+            const { data: order } = await api.post(endpoint, orderData);
             localOrderIdRef.current = order._id;
 
-            // 2. Create PayPal order
-            const { data: paypalOrder } = await api.post('/api/payment/paypal/create-order', {
-                orderId: order._id,
-            });
+            // 2. Create PayPal order (use guest endpoint if guest checkout)
+            const paypalEndpoint = isGuestCheckout
+                ? '/api/payment/paypal/guest/create-order'
+                : '/api/payment/paypal/create-order';
+            const paypalPayload = isGuestCheckout
+                ? { orderId: order._id, guestEmail: shippingAddress.email }
+                : { orderId: order._id };
+            const { data: paypalOrder } = await api.post(paypalEndpoint, paypalPayload);
 
             return paypalOrder.id; // Return PayPal order ID for the SDK
 
@@ -158,10 +168,14 @@ const Checkout = () => {
     const paypalOnApprove = async (data) => {
         setLoading(true);
         try {
-            // Capture the payment
-            await api.post('/api/payment/paypal/capture-order', {
-                orderID: data.orderID,
-            });
+            // Capture the payment (use guest endpoint if guest checkout)
+            const captureEndpoint = isGuestCheckout
+                ? '/api/payment/paypal/guest/capture-order'
+                : '/api/payment/paypal/capture-order';
+            const capturePayload = isGuestCheckout
+                ? { orderID: data.orderID, guestEmail: shippingAddress.email }
+                : { orderID: data.orderID };
+            await api.post(captureEndpoint, capturePayload);
 
             toast.success('Payment successful! Order placed.');
             dispatch(clearCart());

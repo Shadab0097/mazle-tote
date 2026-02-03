@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, memo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProducts } from '../store/productSlice';
@@ -7,7 +7,7 @@ import { Container } from '@/components/ui/Container';
 import { FiSearch, FiX, FiShoppingBag } from 'react-icons/fi';
 
 // --- Product Card Component ---
-const ProductCard = ({ product, onAddToCart }) => (
+const ProductCard = memo(({ product, onAddToCart }) => (
   <div className="w-full h-full group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 flex flex-col">
     <div className="relative overflow-hidden aspect-[4/5]">
       {product.images?.[0] ? (
@@ -23,6 +23,16 @@ const ProductCard = ({ product, onAddToCart }) => (
           <FiShoppingBag size={32} />
         </div>
       )}
+
+      {/* Animated Hanging Pre-Order Badge */}
+      <div className="absolute -top-1 right-4 z-20 animate-sway origin-top">
+        <div className="bg-[var(--color-primary)] text-white w-16 h-24 shadow-lg flex flex-col items-center justify-center p-2 clip-path-badge before:absolute before:inset-0 before:bg-gradient-to-b before:from-white/20 before:to-transparent">
+          <span className="text-[7px] font-black uppercase tracking-tight mb-1 leading-tight text-center opacity-90 border-b border-white/20 pb-1 mb-1 w-full">Coming<br />Soon</span>
+          <span className="text-[10px] font-bold uppercase tracking-widest mb-0 opacity-80">Pre</span>
+          <span className="text-xs font-extrabold uppercase tracking-wider relative z-10">Order</span>
+          <div className="w-1.5 h-1.5 bg-white/50 rounded-full mt-1.5 shadow-inner"></div>
+        </div>
+      </div>
 
       {product.stock < 5 && product.stock > 0 && (
         <span className="absolute top-4 left-4 bg-orange-500 text-white text-xs font-bold px-3 py-1 uppercase tracking-wider rounded-full">
@@ -64,7 +74,7 @@ const ProductCard = ({ product, onAddToCart }) => (
       </div>
     </Link>
   </div>
-);
+));
 
 const Products = () => {
   const dispatch = useDispatch();
@@ -91,7 +101,7 @@ const Products = () => {
     setFilteredProducts(filtered);
   }, [products, searchQuery]);
 
-  const handleAddToCart = (product) => {
+  const handleAddToCart = useCallback((product) => {
     dispatch(
       addToCart({
         product: product._id,
@@ -101,9 +111,11 @@ const Products = () => {
         quantity: 1,
       })
     );
+    // Don't navigate to cart immediately, maybe show toast instead? 
+    // Keeping navigation for now as per previous behavior
     window.scrollTo({ top: 0, behavior: 'smooth' });
     navigate('/cart');
-  };
+  }, [dispatch, navigate]);
 
   return (
     <div className="pt-32 pb-24 bg-[var(--color-bg-secondary)] min-h-screen">

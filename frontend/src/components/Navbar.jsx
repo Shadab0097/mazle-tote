@@ -75,7 +75,7 @@ const Navbar = () => {
         <div className="flex justify-between items-center">
           {/* Logo */}
           <Link to="/" onClick={scrollToTop} className="flex items-center gap-2 group">
-            <img src="/logo.png" alt="Mazel Tote" className="h-14 md:h-16 w-auto object-contain" />
+            <img src="/logo.png" alt="Mazel Tote" className="h-16 md:h-20 w-auto object-contain" />
           </Link>
 
           {/* Desktop Navigation - Clean & Professional */}
