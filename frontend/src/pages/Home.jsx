@@ -169,7 +169,7 @@ const MeetFounder = () => {
                                 Founder & Designer
                             </div>
                             <h3 className="text-3xl lg:text-4xl font-extrabold text-[var(--color-text)] leading-tight mb-2">
-                                Brielle Harbur
+                                Brielle H.
                             </h3>
                             <p className="text-[var(--color-primary)] font-medium text-sm">
                                 12-year-old entrepreneur • Boca Raton, Florida
@@ -178,7 +178,7 @@ const MeetFounder = () => {
 
                         <div className="space-y-6 text-gray-600 text-lg leading-relaxed">
                             <p>
-                                "Hello, welcome to Mazel Tote! My name is <strong className="text-[var(--color-text)]">Brielle Harbur</strong>, and I am the owner, founder, and creative designer of this business. I am currently 12 years old and located in Boca Raton, Florida."
+                                "Hello, welcome to Mazel Tote! My name is <strong className="text-[var(--color-text)]">Brielle H.</strong>, and I am the owner, founder, and creative designer of this business. I am currently 12 years old and located in Boca Raton, Florida."
                             </p>
                             <p>
                                 "I am proud to be Jewish and live by the core Jewish value of <em className="font-serif text-[var(--color-primary)] font-bold">Tikkun Olam</em> (תִּיקּוּן עוֹלָם), which translates to 'repairing the world.' It encourages us to improve the world through social justice and acts of kindness."

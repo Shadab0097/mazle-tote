@@ -62,7 +62,7 @@ const About = () => {
 
                             <div className="space-y-8 text-lg text-gray-600 leading-relaxed font-light max-w-xl">
                                 <p>
-                                    Mazel Tote Bags were created for those who carry hope in the face of antisemitism. Exclusively designed by <strong className="font-semibold text-[var(--color-text)]">Brielle Harbur</strong>, a 12-year-old girl located in Boca Raton, Florida, preparing for her upcoming Bat Mitzvah.
+                                    Mazel Tote Bags were created for those who carry hope in the face of antisemitism. Exclusively designed by <strong className="font-semibold text-[var(--color-text)]">Brielle H.</strong>, a 12-year-old girl located in Boca Raton, Florida, preparing for her upcoming Bat Mitzvah.
                                 </p>
                                 <p>
                                     She was inspired by the recent tragic events at Bondi Beach in Australia. Through this bag, she hopes to inspire others to carry hope and envision a world of acceptance and kindness, free from hate.
