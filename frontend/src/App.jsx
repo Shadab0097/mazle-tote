@@ -4,6 +4,8 @@ import { Provider, useDispatch } from 'react-redux';
 import { store } from './store';
 import { getProfile, getAdminProfile } from './store/authSlice';
 import { ToastProvider } from './context/ToastContext';
+import ScrollToTop from './components/ScrollToTop';
+import NewsletterModal from './components/NewsletterModal';
 
 // Layouts
 import Layout from './components/Layout';
@@ -75,6 +77,8 @@ function AuthChecker() {
 function AppRoutes() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
+      <NewsletterModal />
       <AuthChecker />
       <Routes>
         {/* Public Routes with Layout */}
