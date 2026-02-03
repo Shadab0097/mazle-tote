@@ -26,13 +26,15 @@ const About = () => {
                                 />
                                 {/* Overlay Content */}
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex flex-col justify-end p-8 text-white">
-                                    <span className="font-bold text-[var(--color-primary)] uppercase tracking-widest text-xs mb-2">Established 2026</span>
-                                    <p className="font-light italic text-lg opacity-90 leading-relaxed">"Exclusively designed by a 12-year-old girl located in Boca Raton, FL."</p>
+                                    <div className="w-2/3 md:w-3/4 sm:-mb-0 -mb-8">
+                                        <span className="font-bold text-[var(--color-primary)] uppercase tracking-widest text-xs mb-2 block">Established 2026</span>
+                                        <p className="font-light italic text-lg opacity-90 leading-relaxed">"Exclusively designed by a 12-year-old girl located in Boca Raton, FL."</p>
+                                    </div>
                                 </div>
                             </div>
 
                             {/* Floating Offset Image - overlay hanging on mobile with space reserved below */}
-                            <div className="absolute -bottom-8 -right-2 lg:-bottom-12 lg:-right-12 w-32 h-32 lg:w-72 lg:h-72 rounded-[1.5rem] lg:rounded-[2.5rem] overflow-hidden shadow-2xl border-4 lg:border-8 border-white z-20 hover:-translate-y-2 transition-transform duration-500">
+                            <div className="absolute sm:-bottom-24  -bottom-8 -right-2 lg:-bottom-24 lg:-right-12 w-32 h-32 lg:w-72 lg:h-72 rounded-[1.5rem] lg:rounded-[2.5rem] overflow-hidden shadow-2xl border-4 lg:border-8 border-white z-20 hover:-translate-y-2 transition-transform duration-500">
                                 <img
                                     src="/founder-story.png"
                                     alt="Founder designing"

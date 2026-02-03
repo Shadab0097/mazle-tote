@@ -56,16 +56,7 @@ const Contact = () => {
                             </div>
 
                             <div className="space-y-8">
-                                <div className="flex items-start gap-6 group">
-                                    <div className="w-14 h-14 rounded-2xl bg-[#F5F8FA] text-[#8ABEE8] flex items-center justify-center group-hover:bg-[#8ABEE8] group-hover:text-white transition-all duration-300">
-                                        <FiMail className="w-6 h-6" />
-                                    </div>
-                                    <div>
-                                        <h4 className="text-lg font-bold mb-1">Primary Contact</h4>
-                                        <p className="text-[var(--color-text)] font-medium">Elizabeth Harbur</p>
-                                        <p className="text-gray-500">lizharbur@gmail.com</p>
-                                    </div>
-                                </div>
+
 
                                 <div className="flex items-start gap-6 group">
                                     <div className="w-14 h-14 rounded-2xl bg-[#F5F8FA] text-[#8ABEE8] flex items-center justify-center group-hover:bg-[#8ABEE8] group-hover:text-white transition-all duration-300">
@@ -77,16 +68,7 @@ const Contact = () => {
                                     </div>
                                 </div>
 
-                                <div className="flex items-start gap-6 group">
-                                    <div className="w-14 h-14 rounded-2xl bg-[#F5F8FA] text-[#8ABEE8] flex items-center justify-center group-hover:bg-[#8ABEE8] group-hover:text-white transition-all duration-300">
-                                        <FiMapPin className="w-6 h-6" />
-                                    </div>
-                                    <div>
-                                        <h4 className="text-lg font-bold mb-1">Visit Us</h4>
-                                        <p className="text-gray-500">5500 North Military Trail</p>
-                                        <p className="text-gray-500">Boca Raton, FL 33496</p>
-                                    </div>
-                                </div>
+
                             </div>
 
                             <div className="pt-12 border-t border-gray-100 italic text-gray-400 font-light">

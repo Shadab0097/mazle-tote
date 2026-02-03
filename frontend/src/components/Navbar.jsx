@@ -65,17 +65,17 @@ const Navbar = () => {
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${isOpen
-        ? 'bg-white py-4'
+        ? 'bg-white py-0'
         : isScrolled
-          ? 'bg-white/90 backdrop-blur-xl border-b border-gray-100 py-2 shadow-[0_2px_20px_rgba(0,0,0,0.02)]'
-          : 'bg-transparent py-4'
+          ? 'bg-white/90 backdrop-blur-xl border-b border-gray-100 py-0 shadow-[0_2px_20px_rgba(0,0,0,0.02)]'
+          : 'bg-transparent py-0'
         }`}
     >
-      <Container>
-        <div className="flex justify-between items-center">
+      <Container className="!py-0 !my-0">
+        <div className="flex justify-between items-center h-24">
           {/* Logo */}
           <Link to="/" onClick={scrollToTop} className="flex items-center gap-2 group">
-            <img src="/logo.png" alt="Mazel Tote" className="h-16 md:h-20 w-auto object-contain" />
+            <img src="/logo.png" alt="Mazel Tote" className="h-28 md:h-32 w-auto object-contain" />
           </Link>
 
           {/* Desktop Navigation - Clean & Professional */}
@@ -163,7 +163,7 @@ const Navbar = () => {
 
       {/* Mobile Menu Overlay */}
       <div
-        className={`lg:hidden fixed inset-0 z-40 bg-white transition-opacity duration-300 ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        className={`lg:hidden fixed inset-0 z-40 bg-white transition-opacity duration-300 h-24 ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
           }`}
       >
         <div className="flex flex-col h-full pt-24 pb-10 px-8 overflow-y-auto">

@@ -44,17 +44,17 @@ const Footer = () => {
   return (
     <footer className="bg-[var(--color-bg-secondary)] pt-8 md:pt-12 pb-6 border-t border-[var(--color-border)]">
       <Container>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-10 mb-8 md:mb-10">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-10 mb-8 md:mb-10">
 
           {/* Brand Column */}
-          <div className="col-span-1 md:col-span-1">
+          <div className="col-span-2 md:col-span-1 flex flex-col items-center md:items-start text-center md:text-left">
             <Link to="/" onClick={scrollToTop} className="inline-block mb-3">
-              <img src="/logo.png" alt="Mazel Tote" className="h-20 w-auto object-contain" />
+              <img src="/logo.png" alt="Mazel Tote" className="h-32 md:h-32 w-auto object-contain" />
             </Link>
             <p className="text-gray-500 text-xs leading-relaxed mb-4 max-w-xs">
               Elevating everyday carry with sustainable luxury. Designed for the modern professional.
             </p>
-            <div className="flex gap-3">
+            <div className="flex gap-3 justify-center md:justify-start">
               {/* Social placeholders */}
               <div className="w-8 h-8 rounded-full bg-gray-100/80 hover:bg-[#8ABEE8] transition-colors"></div>
               <div className="w-8 h-8 rounded-full bg-gray-100/80 hover:bg-[#8ABEE8] transition-colors"></div>
@@ -63,7 +63,7 @@ const Footer = () => {
           </div>
 
           {/* Links Column */}
-          <div>
+          <div className="col-span-1 pl-9 md:pl-0">
             <h4 className="font-bold text-sm text-[#2C2C2C] mb-4">Shop</h4>
             <ul className="space-y-2 text-xs text-gray-500 font-medium">
               <li><Link to="/products" onClick={scrollToTop} className="hover:text-[var(--color-primary)] transition-colors">All Products</Link></li>
@@ -73,7 +73,7 @@ const Footer = () => {
           </div>
 
           {/* Company Column */}
-          <div>
+          <div className="col-span-1 pl-9 md:pl-0">
             <h4 className="font-bold text-sm text-[#2C2C2C] mb-4">Company</h4>
             <ul className="space-y-2 text-xs text-gray-500 font-medium">
               <li><Link to="/about" onClick={scrollToTop} className="hover:text-[var(--color-primary)] transition-colors">Our Story</Link></li>
@@ -83,9 +83,9 @@ const Footer = () => {
           </div>
 
           {/* Newsletter Column */}
-          <div className="col-span-1">
+          <div className="col-span-2 md:col-span-1 text-center md:text-left sm:mt-0 mt-8">
             <h4 className="font-bold text-sm text-[#2C2C2C] mb-3">Stay Updated</h4>
-            <p className="text-xs text-gray-400 mb-3">Subscribe for exclusive offers and design news.</p>
+            <p className="text-xs text-gray-400 mb-3 text-center md:text-left">Subscribe for exclusive offers and design news.</p>
             <form onSubmit={handleSubscribe} className="flex flex-col gap-2">
               <Input
                 placeholder="Enter your email"
