@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { FiX, FiMail } from 'react-icons/fi';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -10,8 +11,12 @@ const NewsletterModal = () => {
     const [email, setEmail] = useState('');
     const [loading, setLoading] = useState(false);
     const toast = useToast();
+    const location = useLocation();
 
     useEffect(() => {
+        // Don't show on admin pages
+        if (location.pathname.startsWith('/admin')) return;
+
         // Check if already shown or subscribed
         const hasSeenModal = localStorage.getItem('mazel_newsletter_seen');
 
