@@ -326,7 +326,7 @@ const Marquee = () => {
                     <React.Fragment key={i}>
                         <span>TIKKUN OLAM</span>
                         <span className="w-2 h-2 bg-white rounded-full"></span>
-                        <span>REPAIRING THE WORLD ONE STITCH AT A TIME</span>
+                        <span>REPAIRING THE WORLD ONE TOTE AT A TIME</span>
                         <span className="w-2 h-2 bg-white rounded-full"></span>
                     </React.Fragment>
                 ))}
