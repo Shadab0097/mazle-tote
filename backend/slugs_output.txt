@@ -1,0 +1,5 @@
+Name: "Love - אהבה (Ahava)", Slug: "Love-Ahava", ID: 697715e420dd639be820fdaf
+Name: "Dream - חלום (Chalom) ", Slug: "Dream-Chalom ", ID: 6979712613027bd93ee38c2a
+Name: " Hope - טיקוב (Tikva)", Slug: "Hope-Tikva", ID: 697a30fd66c597c1c33be032
+Name: "Protection - גהנאן (Hagana)", Slug: "Protection-Hagana", ID: 697a33de5daa332223f659f5
+Name: "Beautiful - יפה (Yafe)", Slug: "Beautiful-Yafe", ID: 697c820914e96afd3075d6c1

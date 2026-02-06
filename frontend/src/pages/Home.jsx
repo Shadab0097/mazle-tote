@@ -7,6 +7,7 @@ import { Container } from '@/components/ui/Container';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent } from '@/components/ui/Card';
 import { FiArrowRight, FiShoppingBag, FiGlobe, FiSun, FiShield, FiHeart, FiBook } from 'react-icons/fi';
+import { FaHeart } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 
 // --- Hero Component ---
@@ -325,9 +326,9 @@ const Marquee = () => {
                 {[...Array(10)].map((_, i) => (
                     <React.Fragment key={i}>
                         <span>TIKKUN OLAM</span>
-                        <span className="w-2 h-2 bg-white rounded-full"></span>
+                        <span className="inline-flex items-center justify-center w-8"><FaHeart className="text-white" size={18} /></span>
                         <span>REPAIRING THE WORLD ONE TOTE AT A TIME</span>
-                        <span className="w-2 h-2 bg-white rounded-full"></span>
+                        <span className="inline-flex items-center justify-center w-8"><FaHeart className="text-white" size={18} /></span>
                     </React.Fragment>
                 ))}
             </div>

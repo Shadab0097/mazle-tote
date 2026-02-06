@@ -39,9 +39,24 @@ const FloatingInput = ({ label, icon: Icon, ...props }) => (
 );
 
 const CHARITIES = [
-    { id: 'StandWithUs', name: 'StandWithUs', icon: FiGlobe, desc: 'Fighting antisemitism & educating about Israel' },
-    { id: 'Combat Campus Antisemitism', name: 'Combat Campus Antisemitism', icon: FiBook, desc: 'Ending hate on college campuses' },
-    { id: 'Blue Square Alliance', name: 'Blue Square Alliance', icon: FiHeart, desc: 'Standing up against Jewish hate' },
+    {
+        id: 'StandWithUs',
+        name: 'Stand With Us',
+        icon: FiGlobe,
+        desc: 'Stand With Us is a nonprofit organization dedicated to educating people about Israel and promoting understanding through advocacy, campus programs, and community outreach. The charity aims to counter misinformation, foster dialogue, and build support for Israel worldwide.'
+    },
+    {
+        id: 'Combat Campus Antisemitism',
+        name: 'Combat Campus Antisemitism',
+        icon: FiBook,
+        desc: 'An initiative dedicated to addressing and combating antisemitism on college and university campuses. It aims to educate students, faculty, and staff about antisemitic attitudes and behaviors, promote awareness, and foster inclusive environments through advocacy, training, and community engagement.'
+    },
+    {
+        id: 'Blue Square Alliance',
+        name: 'Blue Square Alliance',
+        icon: FiHeart,
+        desc: 'Founded in 2019 by Robert Kraft, the Foundation to Combat Antisemitism responds to rising hate in the U.S. The Blue Square, introduced in 2023, has become a global symbol of Jewish solidarity. In 2025, Kraft launched the Blue Square Alliance Against Hate, uniting partners in the fight against all forms of hate.'
+    },
 ];
 
 const Checkout = () => {
@@ -58,6 +73,7 @@ const Checkout = () => {
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [currentStep, setCurrentStep] = useState(1);
     const [selectedCharity, setSelectedCharity] = useState(charityTrust || CHARITIES[0].id);
+    const [viewingCharity, setViewingCharity] = useState(null);
     const [shippingAddress, setShippingAddress] = useState({
         firstName: '', lastName: '', email: '', phone: '', address: '', city: '', state: '', zip: ''
     });
@@ -315,6 +331,50 @@ const Checkout = () => {
                             </p>
                         </div>
 
+                        {/* Charity Modal */}
+                        {viewingCharity && (
+                            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:hidden">
+                                <div className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300" onClick={() => setViewingCharity(null)}></div>
+                                <div className="bg-white rounded-[2rem] p-6 w-full max-w-sm relative z-10 shadow-2xl animate-in zoom-in-95 duration-300">
+                                    <button
+                                        onClick={() => setViewingCharity(null)}
+                                        className="absolute top-4 right-4 w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-gray-500 hover:bg-gray-200 transaction-colors"
+                                    >
+                                        <FiChevronRight className="rotate-90" />
+                                    </button>
+
+                                    <div className="mb-6">
+                                        <div className="w-12 h-12 bg-[#8ABEE8]/10 text-[#8ABEE8] rounded-2xl flex items-center justify-center mb-4">
+                                            {(() => {
+                                                const Icon = CHARITIES.find(c => c.id === viewingCharity)?.icon || FiHeart;
+                                                return <Icon size={24} />;
+                                            })()}
+                                        </div>
+                                        <h3 className="text-xl font-bold text-[#2C2C2C] leading-tight">
+                                            {CHARITIES.find(c => c.id === viewingCharity)?.name}
+                                        </h3>
+                                    </div>
+
+                                    <div className="max-h-[60vh] overflow-y-auto custom-scrollbar">
+                                        <p className="text-gray-600 leading-relaxed text-sm">
+                                            {CHARITIES.find(c => c.id === viewingCharity)?.desc}
+                                        </p>
+                                    </div>
+
+                                    <button
+                                        onClick={() => {
+                                            setSelectedCharity(viewingCharity);
+                                            dispatch(setCharityTrust(viewingCharity));
+                                            setViewingCharity(null);
+                                        }}
+                                        className="w-full mt-6 bg-[#2C2C2C] text-white h-12 rounded-xl font-bold hover:bg-[#8ABEE8] transition-colors flex items-center justify-center gap-2"
+                                    >
+                                        Select This Cause
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
                         {/* STEP 1: Impact Selection */}
                         {currentStep === 1 && (
                             <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
@@ -322,37 +382,61 @@ const Checkout = () => {
                                     <span className="text-[10px] font-bold text-white bg-[#8ABEE8] px-2 py-2 md:px-3 rounded-full shadow-sm shadow-[#8ABEE8]/20">100% Donation Included</span>
                                 </div>
 
-                                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <div className="grid grid-cols-1 gap-4">
                                     {CHARITIES.map((c) => (
-                                        <button
+                                        <div
                                             key={c.id}
                                             onClick={() => {
                                                 setSelectedCharity(c.id);
                                                 dispatch(setCharityTrust(c.id));
                                             }}
-                                            className={`group relative p-4 md:p-6 rounded-[1.5rem] md:rounded-[2rem] border-2 text-left transition-all duration-300 outline-none flex flex-row md:flex-col justify-between items-center md:items-start gap-4 md:gap-0 h-auto md:h-64 ${selectedCharity === c.id
-                                                ? 'border-[#2C2C2C] bg-[#2C2C2C] text-white shadow-xl shadow-[#2C2C2C]/20 transform scale-[1.02]'
+                                            className={`group relative p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border-2 text-left transition-all duration-300 cursor-pointer flex flex-col md:flex-row gap-6 items-start ${selectedCharity === c.id
+                                                ? 'border-[#2C2C2C] bg-[#2C2C2C] text-white shadow-xl shadow-[#2C2C2C]/20 transform scale-[1.01]'
                                                 : 'border-white bg-white hover:border-[#8ABEE8]/30 hover:shadow-lg hover:shadow-[#8ABEE8]/5 text-[#2C2C2C]'
                                                 }`}
                                         >
-                                            {/* <div className={`w-6 h-6 md:w-14 md:h-14 rounded-xl md:rounded-2xl flex items-center justify-center text-lg md:text-2xl transition-all duration-500 shrink-0 ${selectedCharity === c.id
-                                                ? 'bg-white/20 text-[#8ABEE8]'
-                                                : 'bg-[#F5F8FA] text-[#2C2C2C] group-hover:bg-[#8ABEE8] group-hover:text-white'
-                                                }`}>
-                                                <c.icon size={14} className="md:w-6 md:h-6" />
-                                            </div> */}
-                                            <div className="flex-1 md:mt-auto">
-                                                <h3 className="font-bold text-sm md:text-lg mb-1 md:mb-2 leading-tight">{c.name}</h3>
-                                                <p className={`text-[10px] md:text-xs font-medium leading-relaxed line-clamp-2 md:line-clamp-none ${selectedCharity === c.id ? 'text-white/70' : 'text-gray-400'}`}>{c.desc}</p>
+                                            <div className="flex-1">
+                                                <h3 className="font-bold text-lg md:text-xl mb-3 leading-tight flex items-center gap-2">
+                                                    {c.name}
+                                                    {/* Mobile Info Icon */}
+                                                    {/* <button 
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                setViewingCharity(c.id);
+                                                            }}
+                                                            className="md:hidden w-6 h-6 rounded-full bg-white/20 flex items-center justify-center ml-auto"
+                                                        >
+                                                            <FiBook size={12} />
+                                                        </button> */}
+                                                </h3>
+
+                                                {/* Desktop: Full Text, Mobile: Truncated */}
+                                                <p className={`text-sm md:text-base font-light leading-relaxed hidden md:block ${selectedCharity === c.id ? 'text-white/80' : 'text-gray-500'}`}>
+                                                    {c.desc}
+                                                </p>
+                                                <div className="md:hidden">
+                                                    <p className={`text-sm font-light leading-relaxed line-clamp-3 ${selectedCharity === c.id ? 'text-white/80' : 'text-gray-500'}`}>
+                                                        {c.desc}
+                                                    </p>
+                                                    <button
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setViewingCharity(c.id);
+                                                        }}
+                                                        className={`text-xs font-bold uppercase tracking-wider mt-2 underline ${selectedCharity === c.id ? 'text-white' : 'text-[#8ABEE8]'}`}
+                                                    >
+                                                        Read More
+                                                    </button>
+                                                </div>
                                             </div>
                                             {selectedCharity === c.id && (
-                                                <div className="absolute top-4 right-4 md:top-6 md:right-6 animate-in fade-in zoom-in duration-300">
-                                                    <div className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-[#8ABEE8] text-white flex items-center justify-center border-2 border-[#2C2C2C]">
-                                                        <FiCheck size={12} className="md:w-4 md:h-4" strokeWidth={4} />
+                                                <div className="absolute top-6 right-6 animate-in fade-in zoom-in duration-300">
+                                                    <div className="w-8 h-8 rounded-full bg-[#8ABEE8] text-white flex items-center justify-center border-2 border-[#2C2C2C]">
+                                                        <FiCheck size={16} strokeWidth={4} />
                                                     </div>
                                                 </div>
                                             )}
-                                        </button>
+                                        </div>
                                     ))}
                                 </div>
 
@@ -443,10 +527,12 @@ const Checkout = () => {
 
                     {/* RIGHT COLUMN: Order Summary */}
                     <div className="lg:col-span-5 relative">
-                        <div className="bg-white text-[#2C2C2C] rounded-[2.5rem] p-6 lg:p-10 shadow-2xl shadow-gray-200/50 sticky top-28 overflow-hidden animate-in fade-in slide-in-from-right-8 duration-700 border border-gray-100">
+                        <div className="bg-white text-[#2C2C2C] rounded-[2.5rem] p-6 lg:p-10 shadow-2xl shadow-gray-200/50 sticky top-28 animate-in fade-in slide-in-from-right-8 duration-700 border border-gray-100 relative">
 
-                            {/* Decorative background blur */}
-                            <div className="absolute top-0 right-0 w-64 h-64 bg-[#F5F8FA] rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+                            {/* Decorative background blur - Wrapped to isolate overflow */}
+                            <div className="absolute inset-0 overflow-hidden rounded-[2.5rem] pointer-events-none">
+                                <div className="absolute top-0 right-0 w-64 h-64 bg-[#F5F8FA] rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+                            </div>
 
                             <div className="relative z-10">
                                 <div className="flex items-center justify-between mb-8 border-b border-gray-100 pb-6">
@@ -500,7 +586,7 @@ const Checkout = () => {
                                 </div>
 
                                 {currentStep === 3 ? (
-                                    <div className="paypal-button-container" style={{ position: 'relative', zIndex: 1 }}>
+                                    <div className="paypal-button-container" style={{ position: 'relative', zIndex: 20 }}>
                                         {loading ? (
                                             <div className="w-full bg-gray-200 h-12 rounded-lg flex items-center justify-center">
                                                 <span className="animate-pulse text-gray-500">Processing...</span>
