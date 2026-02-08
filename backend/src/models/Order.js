@@ -43,7 +43,8 @@ const orderSchema = new mongoose.Schema(
         },
         payment: {
             method: { type: String, required: true },
-            paymentId: { type: String },
+            paypalOrderId: { type: String }, // PayPal Order ID (token)
+            paypalCaptureId: { type: String }, // Real Transaction ID
             status: { type: String, default: 'Pending' },
         },
         // PayPal Order ID for duplicate detection

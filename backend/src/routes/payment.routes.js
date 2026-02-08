@@ -278,8 +278,15 @@ router.post('/paypal/guest/capture-order', async (req, res) => {
         }
 
         if (paypalOrderDetails.status === 'COMPLETED') {
+            const captureId = paypalOrderDetails.purchase_units?.[0]?.payments?.captures?.[0]?.id || orderID;
+
             order.status = 'Paid';
-            order.payment = { method: 'PayPal', paymentId: orderID, status: 'Completed' };
+            order.payment = {
+                method: 'PayPal',
+                paypalOrderId: orderID,
+                paypalCaptureId: captureId,
+                status: 'Completed'
+            };
             await order.save();
             return res.json(paypalOrderDetails);
         }
@@ -298,8 +305,15 @@ router.post('/paypal/guest/capture-order', async (req, res) => {
         const capturedOrder = response.data;
 
         if (capturedOrder.status === 'COMPLETED') {
+            const captureId = capturedOrder.purchase_units?.[0]?.payments?.captures?.[0]?.id;
+
             order.status = 'Paid';
-            order.payment = { method: 'PayPal', paymentId: capturedOrder.id, status: 'Completed' };
+            order.payment = {
+                method: 'PayPal',
+                paypalOrderId: capturedOrder.id,
+                paypalCaptureId: captureId,
+                status: 'Completed'
+            };
             await order.save();
 
             // Decrement stock
@@ -414,10 +428,13 @@ router.post('/paypal/capture-order', protect, async (req, res) => {
         // Check if PayPal order already completed (webhook or retry scenario)
         if (paypalOrderDetails.status === 'COMPLETED') {
             console.log(`PayPal order ${orderID} already completed, updating local order`);
+            const captureId = paypalOrderDetails.purchase_units?.[0]?.payments?.captures?.[0]?.id || orderID;
+
             order.status = 'Paid';
             order.payment = {
                 method: 'PayPal',
-                paymentId: orderID,
+                paypalOrderId: orderID,
+                paypalCaptureId: captureId,
                 status: 'Completed'
             };
             await order.save();
@@ -443,10 +460,13 @@ router.post('/paypal/capture-order', protect, async (req, res) => {
 
         if (capturedOrder.status === 'COMPLETED') {
             // Payment successful
+            const captureId = capturedOrder.purchase_units?.[0]?.payments?.captures?.[0]?.id;
+
             order.status = 'Paid';
             order.payment = {
                 method: 'PayPal',
-                paymentId: capturedOrder.id,
+                paypalOrderId: capturedOrder.id,
+                paypalCaptureId: captureId,
                 status: 'Completed'
             };
             await order.save();
