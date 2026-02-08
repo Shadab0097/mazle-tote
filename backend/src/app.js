@@ -18,7 +18,11 @@ const webhookRoutes = require('./routes/webhook.routes');
 const app = express();
 
 // Middleware
-app.use(express.json());
+app.use(express.json({
+    verify: (req, res, buf) => {
+        req.rawBody = buf;
+    }
+}));
 // Debug Middleware to check Origin
 app.use((req, res, next) => {
     console.log('Request Origin:', req.headers.origin);
