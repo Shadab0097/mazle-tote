@@ -34,7 +34,10 @@ const Login = () => {
   const { loading, error, isAuthenticated } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    if (isAuthenticated) navigate('/');
+    if (isAuthenticated) {
+      toast.success('Welcome back!');
+      navigate('/');
+    }
     if (error) toast.error(error);
     return () => dispatch(clearError());
   }, [isAuthenticated, error, navigate, dispatch, toast]);

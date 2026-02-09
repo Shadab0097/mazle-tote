@@ -51,12 +51,12 @@ const Register = () => {
     e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
-      // In a real app we'd set a specific error here, but for now relying on existing error flow or simple return
-      console.error("Passwords do not match");
+      toast.error("Passwords do not match");
       return;
     }
 
     if (!agreed) {
+      toast.error("Please agree to the Privacy Policy");
       return;
     }
 
