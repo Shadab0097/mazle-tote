@@ -530,8 +530,8 @@ const Checkout = () => {
                         <div className="bg-white text-[#2C2C2C] rounded-[2.5rem] p-6 lg:p-10 shadow-2xl shadow-gray-200/50 sticky top-28 animate-in fade-in slide-in-from-right-8 duration-700 border border-gray-100 relative">
 
                             {/* Decorative background blur - Wrapped to isolate overflow */}
-                            <div className="absolute inset-0 overflow-hidden rounded-[2.5rem] pointer-events-none">
-                                <div className="absolute top-0 right-0 w-64 h-64 bg-[#F5F8FA] rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+                            <div className="absolute inset-0 overflow-hidden rounded-[2.5rem] pointer-events-none -z-10">
+                                <div className="absolute top-0 right-0 w-64 h-64 bg-[#F5F8FA] rounded-full blur-xl opacity-70 -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
                             </div>
 
                             <div className="relative z-10">

@@ -167,6 +167,69 @@ router.post('/paypal', async (req, res) => {
             }
         }
 
+        // 🔄 Handle Refund
+        if (eventType === 'PAYMENT.CAPTURE.REFUNDED') {
+            const resource = event.resource;
+            const refundId = resource.id;
+            const refundAmount = parseFloat(resource.amount?.value || 0);
+
+            // DEBUG: Log the full resource to understand structure
+            console.log('Refund resource:', JSON.stringify(resource, null, 2));
+
+            // Try multiple methods to extract capture ID
+            let captureId = null;
+
+            // Method 1: From links array with rel="up"
+            const captureLink = resource.links?.find(l => l.rel === 'up');
+            if (captureLink?.href) {
+                captureId = captureLink.href.split('/').pop();
+            }
+
+            // Method 2: From supplementary_data (some PayPal versions)
+            if (!captureId && resource.supplementary_data?.related_ids?.capture_id) {
+                captureId = resource.supplementary_data.related_ids.capture_id;
+            }
+
+            // Method 3: Direct property (some sandbox versions)
+            if (!captureId && resource.capture_id) {
+                captureId = resource.capture_id;
+            }
+
+            console.log(`Refund webhook: Extracted captureId = ${captureId}`);
+
+            if (!captureId) {
+                console.warn('Refund webhook: Could not extract captureId from any source');
+                console.warn('Available resource keys:', Object.keys(resource));
+                return res.sendStatus(200);
+            }
+
+            // Find order by captureId
+            const order = await Order.findOne({ 'payment.paypalCaptureId': captureId });
+            console.log(`Refund webhook: Order lookup result = ${order ? order._id : 'NOT FOUND'}`);
+
+            if (!order) {
+                console.warn(`Refund webhook: Order not found for capture ${captureId}`);
+                return res.sendStatus(200);
+            }
+
+            // 🛑 Idempotency: skip if already refunded
+            if (order.status === 'Refunded') {
+                console.log(`Order ${order._id} already Refunded. Webhook ignored.`);
+                return res.sendStatus(200);
+            }
+
+            // Update order
+            order.status = 'Refunded';
+            order.payment.status = 'Refunded';
+            order.payment.refundId = refundId;
+            order.payment.refundedAt = new Date();
+            order.payment.refundAmount = refundAmount;
+
+            await order.save();
+
+            console.log(`Webhook: Order ${order._id} marked as Refunded | RefundID=${refundId} | Amount=${refundAmount}`);
+        }
+
     } catch (err) {
         console.error('Webhook handler error:', err.message);
     }

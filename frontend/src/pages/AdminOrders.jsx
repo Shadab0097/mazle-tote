@@ -102,6 +102,7 @@ const AdminOrders = () => {
             case 'Paid': return 'bg-blue-100 text-blue-800';
             case 'Shipped': return 'bg-purple-100 text-purple-800';
             case 'Delivered': return 'bg-green-100 text-green-800';
+            case 'Refunded': return 'bg-red-100 text-red-800';
             default: return 'bg-gray-100 text-gray-800';
         }
     };
@@ -112,6 +113,7 @@ const AdminOrders = () => {
             case 'Paid': return <FiCheckCircle />;
             case 'Shipped': return <FiTruck />;
             case 'Delivered': return <FiPackage />;
+            case 'Refunded': return <FiX />;
             default: return <FiClock />;
         }
     }
@@ -183,6 +185,7 @@ const AdminOrders = () => {
                         <option value="Shipped">Shipped</option>
                         <option value="Delivered">Delivered</option>
                         <option value="Cancelled">Cancelled</option>
+                        <option value="Refunded">Refunded</option>
                     </select>
 
                     <select

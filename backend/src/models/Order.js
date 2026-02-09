@@ -47,6 +47,9 @@ const orderSchema = new mongoose.Schema(
             paypalOrderId: { type: String }, // PayPal Order ID (token)
             paypalCaptureId: { type: String }, // Real Transaction ID
             status: { type: String, default: 'Pending' },
+            refundId: { type: String }, // PayPal Refund ID
+            refundedAt: { type: Date }, // Timestamp of refund
+            refundAmount: { type: Number }, // Refund amount (supports partial)
         },
         // PayPal Order ID for duplicate detection
         paypalOrderId: {
@@ -62,7 +65,7 @@ const orderSchema = new mongoose.Schema(
             type: String,
             required: true,
             default: 'AwaitingPayment',
-            enum: ['AwaitingPayment', 'Paid', 'PaymentFailed', 'Cancelled', 'Shipped', 'Delivered'],
+            enum: ['AwaitingPayment', 'Paid', 'PaymentFailed', 'Cancelled', 'Shipped', 'Delivered', 'Refunded'],
         },
         // Track payment attempts for analytics
         paymentAttempts: {
