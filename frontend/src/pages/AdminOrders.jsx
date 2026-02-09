@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchAllOrders } from '../store/adminSlice';
 import { FiSearch, FiRefreshCw } from 'react-icons/fi';
 import api from '../services/api';
-import { FiClock, FiCheckCircle, FiTruck, FiPackage, FiFilter, FiAlertCircle, FiX, FiPrinter } from 'react-icons/fi';
+import { FiClock, FiCheckCircle, FiTruck, FiPackage, FiFilter, FiAlertCircle, FiX, FiPrinter, FiCopy, FiCreditCard } from 'react-icons/fi';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useToast } from '../context/ToastContext';
@@ -207,6 +207,7 @@ const AdminOrders = () => {
                                 <th className="px-6 py-4">Address</th>
                                 <th className="px-6 py-4">Products</th>
                                 <th className="px-6 py-4">Charity</th>
+                                <th className="px-6 py-4">Payment</th>
                                 <th className="px-6 py-4">Total</th>
                                 <th className="px-6 py-4">Status</th>
                                 <th className="px-6 py-4">Action</th>
@@ -215,7 +216,7 @@ const AdminOrders = () => {
                         <tbody className="divide-y divide-[var(--color-border)]">
                             {filteredOrders.length === 0 ? (
                                 <tr>
-                                    <td colSpan="8" className="px-6 py-12 text-center text-gray-400">
+                                    <td colSpan="9" className="px-6 py-12 text-center text-gray-400">
                                         No orders found matching your filters
                                     </td>
                                 </tr>
@@ -255,6 +256,36 @@ const AdminOrders = () => {
                                             {order.charityTrust ? (
                                                 <span className="text-sm font-medium text-[var(--color-primary)]">{order.charityTrust}</span>
                                             ) : <span className="text-gray-400">-</span>}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <div className="flex flex-col gap-1">
+                                                {order.payment?.paypalCaptureId ? (
+                                                    <button
+                                                        onClick={() => {
+                                                            navigator.clipboard.writeText(order.payment.paypalCaptureId);
+                                                            toast.success('Transaction ID copied!');
+                                                        }}
+                                                        className="flex items-center gap-1 text-xs font-mono text-gray-600 hover:text-[#2C2C2C] transition-colors group"
+                                                        title={order.payment.paypalCaptureId}
+                                                    >
+                                                        <span>{order.payment.paypalCaptureId.slice(-10).toUpperCase()}</span>
+                                                        <FiCopy size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                                                    </button>
+                                                ) : (
+                                                    <span className="text-xs text-gray-400">-</span>
+                                                )}
+                                                {order.payment?.paymentSource === 'card' ? (
+                                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase w-fit bg-purple-100 text-purple-700">
+                                                        <FiCreditCard size={10} />
+                                                        Card
+                                                    </span>
+                                                ) : (
+                                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase w-fit bg-blue-100 text-blue-700">
+                                                        <span className="font-black text-[10px]">P</span>
+                                                        {order.payment?.paymentSource || 'PayPal'}
+                                                    </span>
+                                                )}
+                                            </div>
                                         </td>
                                         <td className="px-6 py-4 font-bold">${order.totalAmount.toFixed(2)}</td>
                                         <td className="px-6 py-4">

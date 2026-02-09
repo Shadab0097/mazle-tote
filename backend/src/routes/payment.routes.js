@@ -306,10 +306,12 @@ router.post('/paypal/guest/capture-order', async (req, res) => {
 
         if (capturedOrder.status === 'COMPLETED') {
             const captureId = capturedOrder.purchase_units?.[0]?.payments?.captures?.[0]?.id;
+            const paymentSource = Object.keys(capturedOrder.payment_source || {})[0] || 'paypal';
 
             order.status = 'Paid';
             order.payment = {
                 method: 'PayPal',
+                paymentSource: paymentSource,
                 paypalOrderId: capturedOrder.id,
                 paypalCaptureId: captureId,
                 status: 'Completed'
@@ -461,10 +463,12 @@ router.post('/paypal/capture-order', protect, async (req, res) => {
         if (capturedOrder.status === 'COMPLETED') {
             // Payment successful
             const captureId = capturedOrder.purchase_units?.[0]?.payments?.captures?.[0]?.id;
+            const paymentSource = Object.keys(capturedOrder.payment_source || {})[0] || 'paypal';
 
             order.status = 'Paid';
             order.payment = {
                 method: 'PayPal',
+                paymentSource: paymentSource,
                 paypalOrderId: capturedOrder.id,
                 paypalCaptureId: captureId,
                 status: 'Completed'
