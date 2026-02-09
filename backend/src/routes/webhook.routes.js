@@ -173,9 +173,6 @@ router.post('/paypal', async (req, res) => {
             const refundId = resource.id;
             const refundAmount = parseFloat(resource.amount?.value || 0);
 
-            // DEBUG: Log the full resource to understand structure
-            console.log('Refund resource:', JSON.stringify(resource, null, 2));
-
             // Try multiple methods to extract capture ID
             let captureId = null;
 
@@ -195,17 +192,13 @@ router.post('/paypal', async (req, res) => {
                 captureId = resource.capture_id;
             }
 
-            console.log(`Refund webhook: Extracted captureId = ${captureId}`);
-
             if (!captureId) {
-                console.warn('Refund webhook: Could not extract captureId from any source');
-                console.warn('Available resource keys:', Object.keys(resource));
+                console.warn('Refund webhook: Could not extract captureId');
                 return res.sendStatus(200);
             }
 
             // Find order by captureId
             const order = await Order.findOne({ 'payment.paypalCaptureId': captureId });
-            console.log(`Refund webhook: Order lookup result = ${order ? order._id : 'NOT FOUND'}`);
 
             if (!order) {
                 console.warn(`Refund webhook: Order not found for capture ${captureId}`);
