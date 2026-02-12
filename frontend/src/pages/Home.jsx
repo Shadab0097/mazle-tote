@@ -365,10 +365,10 @@ const ProductCardComponent = memo(({ product, onAddToCart }) => (
             </div>
 
             {/* Tag - Logic could be expanded */}
-            {product.stock < 5 && (
-                <span className="absolute top-4 left-4 bg-[var(--color-text)] text-white text-xs font-bold px-3 py-1 uppercase tracking-wider">
-                    Low Stock
-                </span>
+            {product.stock < 10 && product.stock > 0 && (
+                <div className="absolute top-4 left-4 bg-red-600 text-white text-[10px] md:text-xs font-bold px-3 py-1.5 uppercase tracking-wide rounded-full shadow-md flex items-center gap-1.5 animate-pulse">
+                    <span className="text-sm">🔥</span> Hurry up! Few left
+                </div>
             )}
 
             <button

@@ -238,7 +238,7 @@ router.put('/:id/status', protectAdmin, async (req, res) => {
                     const emailMessage = `
                         <h1>Order Status Update</h1>
                         <p>Hi ${order.user.name || 'Valued Customer'},</p>
-                        <p>Your order <strong>#${order._id}</strong> status has been updated to:</p>
+                        <p>Your order <strong>#${order._id.slice(-8)}</strong> status has been updated to:</p>
                         <h2 style="color: #4A90E2;">${order.status}</h2>
                         <p>You can view your order details in your dashboard.</p>
                         <p>Thank you for shopping with Mazel Tote!</p>
