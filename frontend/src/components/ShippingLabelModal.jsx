@@ -53,9 +53,9 @@ const ShippingLabelModal = ({ isOpen, onClose, order }) => {
     if (!isOpen || !order) return null;
 
     const companyName = import.meta.env.VITE_COMPANY_NAME || "Mazel Tote";
-    const companyAddress1 = import.meta.env.VITE_COMPANY_ADDRESS_LINE1 || "123 Sustainable Way";
-    const companyAddress2 = import.meta.env.VITE_COMPANY_ADDRESS_LINE2 || "Fashion District, NY 10001";
-    const companyPhone = import.meta.env.VITE_COMPANY_PHONE || "+1 (555) 123-4567";
+    const companyAddress1 = import.meta.env.VITE_COMPANY_ADDRESS_LINE1 || "5500 North Military";
+    const companyAddress2 = import.meta.env.VITE_COMPANY_ADDRESS_LINE2 || "Trail Boca Raton, FL 33496";
+    // const companyPhone = import.meta.env.VITE_COMPANY_PHONE || "+1 (555) 123-4567";
 
     const handlePrint = () => {
         window.print();
@@ -90,7 +90,7 @@ const ShippingLabelModal = ({ isOpen, onClose, order }) => {
                                     <div className="font-bold">{companyName}</div>
                                     <div>{companyAddress1}</div>
                                     <div>{companyAddress2}</div>
-                                    <div className="mt-1">Tel: {companyPhone}</div>
+                                    {/* <div className="mt-1">Tel: {companyPhone}</div> */}
                                 </div>
                             </div>
 

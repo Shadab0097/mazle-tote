@@ -46,6 +46,50 @@ productRouter.post('/', protectAdmin, async (req, res) => {
     }
 });
 
+// @desc    Bulk create products
+// @route   POST /api/products/bulk
+// @access  Public (Temporary for migration)
+// productRouter.post('/bulk', async (req, res) => {
+//     try {
+//         const products = req.body;
+
+//         if (!Array.isArray(products)) {
+//             return res.status(400).json({ message: 'Request body must be an array of products' });
+//         }
+
+//         const stats = {
+//             success: 0,
+//             failed: 0,
+//             errors: []
+//         };
+
+//         for (const productData of products) {
+//             try {
+//                 // Check if exists
+//                 const existing = await Product.findOne({ slug: productData.slug });
+//                 if (existing) {
+//                     stats.failed++;
+//                     stats.errors.push(`Skipped ${productData.name}: Slug already exists`);
+//                     continue;
+//                 }
+
+//                 await Product.create(productData);
+//                 stats.success++;
+//             } catch (err) {
+//                 stats.failed++;
+//                 stats.errors.push(`Failed ${productData.name}: ${err.message}`);
+//             }
+//         }
+
+//         res.status(201).json({
+//             message: 'Bulk import completed',
+//             stats
+//         });
+//     } catch (error) {
+//         res.status(500).json({ message: error.message });
+//     }
+// });
+
 // @desc    Fetch single product by slug
 // @route   GET /api/products/:slug
 // @access  Public
