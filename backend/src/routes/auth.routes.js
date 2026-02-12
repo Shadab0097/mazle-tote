@@ -183,16 +183,27 @@ authRouter.post('/forgot-password', async (req, res) => {
 
         // In a real application, you would send an email here with the reset link
         // For now, we'll return the token in the response (development only)
-        const resetUrl = `${req.protocol}://${req.get('host').replace(':5000', ':5173')}/reset-password/${resetToken}`;
+        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+        const resetUrl = `${frontendUrl}/reset-password/${resetToken}`;
 
-        // For production, you would use a mail service like nodemailer, SendGrid, etc.
-        // await sendEmail({ email: user.email, subject: 'Password Reset', message: resetUrl });
+        // Send email
+        await sendEmail({
+            email: user.email,
+            subject: 'Password Reset Request',
+            html: `
+                <h1>Password Reset</h1>
+                <p>You requested to reset your password. Click the link below to set a new password:</p>
+                <a href="${resetUrl}">${resetUrl}</a>
+                <p>This link will expire in 10 minutes.</p>
+            `,
+            message: `Password reset link: ${resetUrl}`
+        });
 
         res.status(200).json({
             success: true,
             message: 'Password reset link has been sent to your email',
             // Remove resetUrl in production - only for development testing
-            resetUrl: process.env.NODE_ENV !== 'production' ? resetUrl : undefined,
+            // resetUrl: process.env.NODE_ENV !== 'production' ? resetUrl : undefined,
         });
     } catch (error) {
         // If error, clear the reset token fields

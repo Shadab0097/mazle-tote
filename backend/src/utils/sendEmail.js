@@ -1,10 +1,36 @@
 /**
- * Email Utility - using Nodemailer
+ * Email Utility - using Nodemailer (Restored)
  * 
  * Uses SMTP configuration from environment variables.
  */
 
 const nodemailer = require('nodemailer');
+
+// --- RESEND IMPLEMENTATION (COMMENTED OUT) ---
+/*
+const { Resend } = require('resend');
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+const sendEmailResend = async (options) => {
+    try {
+        const fromEmail = process.env.FROM_EMAIL || 'onboarding@resend.dev';
+        const toEmail = options.email;
+
+        const data = await resend.emails.send({
+            from: `Mazel Tote <${fromEmail}>`,
+            to: toEmail,
+            subject: options.subject,
+            html: options.html,
+            text: options.message 
+        });
+        console.log('Email sent successfully via Resend:', data.id);
+        return data;
+    } catch (error) {
+        console.error('Failed to send email via Resend:', error);
+        throw error;
+    }
+};
+*/
 
 const sendEmail = async (options) => {
     // Create transporter
