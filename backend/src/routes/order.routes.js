@@ -233,25 +233,30 @@ router.put('/:id/status', protectAdmin, async (req, res) => {
             const updatedOrder = await order.save();
 
             // Send email if status changed
-            if (oldStatus !== order.status && order.user && order.user.email) {
-                try {
-                    const emailMessage = `
-                        <h1>Order Status Update</h1>
-                        <p>Hi ${order.user.name || 'Valued Customer'},</p>
-                        <p>Your order <strong>#${order._id.slice(-8)}</strong> status has been updated to:</p>
-                        <h2 style="color: #4A90E2;">${order.status}</h2>
-                        <p>You can view your order details in your dashboard.</p>
-                        <p>Thank you for shopping with Mazel Tote!</p>
-                    `;
+            if (oldStatus !== order.status) {
+                const recipientEmail = order.user?.email || order.guestEmail;
+                const recipientName = order.user?.name || 'Valued Customer';
 
-                    await sendEmail({
-                        email: order.user.email,
-                        subject: `Order Updated: ${order.status} - Mazel Tote`,
-                        html: emailMessage
-                    });
-                    console.log(`Status update email sent to ${order.user.email}`);
-                } catch (emailError) {
-                    console.error('Failed to send status update email:', emailError);
+                if (recipientEmail) {
+                    try {
+                        const emailMessage = `
+                            <h1>Order Status Update</h1>
+                            <p>Hi ${recipientName},</p>
+                            <p>Your order <strong>#${order._id.slice(-8)}</strong> status has been updated to:</p>
+                            <h2 style="color: #4A90E2;">${order.status}</h2>
+                            <p>You can view your order details in your dashboard.</p>
+                            <p>Thank you for shopping with Mazel Tote!</p>
+                        `;
+
+                        await sendEmail({
+                            email: recipientEmail,
+                            subject: `Order Updated: ${order.status} - Mazel Tote`,
+                            html: emailMessage
+                        });
+                        console.log(`Status update email sent to ${recipientEmail}`);
+                    } catch (emailError) {
+                        console.error('Failed to send status update email:', emailError);
+                    }
                 }
             }
 
