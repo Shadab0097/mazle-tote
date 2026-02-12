@@ -341,7 +341,7 @@ router.post('/paypal/guest/capture-order', async (req, res) => {
                     const emailMessage = `
                         <h1>Order Confirmed!</h1>
                         <p>Thank you for your purchase from Mazel Tote.</p>
-                        <p><strong>Order ID:</strong> ${order._id}</p>
+                        <p><strong>Order ID:</strong> ${order._id.toString().slice(-8).toUpperCase()}</p>
                         <p><strong>Total:</strong> $${order.totalAmount.toFixed(2)}</p>
                         <h3>Items:</h3>
                         <ul>${itemsList}</ul>
@@ -359,7 +359,7 @@ router.post('/paypal/guest/capture-order', async (req, res) => {
                     if (adminEmail) {
                         await sendEmail({
                             email: adminEmail,
-                            subject: `New Guest Order - ${order._id}`,
+                            subject: `New Guest Order - ${order._id.toString().slice(-8).toUpperCase()}`,
                             html: `<h1>New Guest Order</h1><p>Email: ${order.guestEmail}</p><p>Total: $${order.totalAmount.toFixed(2)}</p>`
                         });
                     }
@@ -508,7 +508,7 @@ router.post('/paypal/capture-order', protect, async (req, res) => {
                         <h1>Order Confirmed!</h1>
                         <p>Hi ${orderWithUser.user.name},</p>
                         <p>Thank you for your purchase from Mazel Tote.</p>
-                        <p><strong>Order ID:</strong> ${order._id}</p>
+                        <p><strong>Order ID:</strong> ${order._id.toString().slice(-8).toUpperCase()}</p>
                         <p><strong>Date:</strong> ${new Date().toLocaleString()}</p>
                         <p><strong>Total:</strong> $${order.totalAmount.toFixed(2)}</p>
                         <h3>Items:</h3>
@@ -527,14 +527,14 @@ router.post('/paypal/capture-order', protect, async (req, res) => {
                     if (adminEmail) {
                         const adminMessage = `
                             <h1>New Order Received</h1>
-                            <p><strong>Order ID:</strong> ${order._id}</p>
+                            <p><strong>Order ID:</strong> ${order._id.toString().slice(-8).toUpperCase()}</p>
                             <p><strong>Customer:</strong> ${orderWithUser.user.name} (${userEmail})</p>
                             <p><strong>Total:</strong> $${order.totalAmount.toFixed(2)}</p>
                             <p>Check the admin dashboard for details.</p>
                         `;
                         await sendEmail({
                             email: adminEmail,
-                            subject: `New Order Alert - ${order._id}`,
+                            subject: `New Order Alert - ${order._id.toString().slice(-8).toUpperCase()}`,
                             html: adminMessage
                         });
                     }
