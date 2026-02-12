@@ -35,33 +35,26 @@ app.use(express.urlencoded({ limit: '10mb', extended: true }));
 /* ---------------------------------------------------
    🌍 CORS (NOT FOR WEBHOOKS)
 --------------------------------------------------- */
-const allowedOrigins = [
-    'https://mazle-tote.pages.dev',
-    'https://www.mazle-tote.pages.dev',
-    'http://localhost:5173',
-    process.env.FRONTEND_URL,
-    process.env.ALLOW_CORS_ORIGIN
-].filter(Boolean);
-
 app.use(cors({
     origin: function (origin, callback) {
-        if (!origin) return callback(null, true);
+        if (!origin) return callback(null, true); // allow webhooks & curl
 
-        if (process.env.NODE_ENV === 'development') {
-            return callback(null, origin);
-        }
+        const allowedOrigins = [
+            'https://mazeltote.com',
+            'https://www.mazeltote.com',
+            'https://mazle-tote.pages.dev',
+            'http://localhost:5173'
+        ];
 
-        if (
-            allowedOrigins.includes(origin) ||
-            origin.endsWith('.mazle-tote.pages.dev')
-        ) {
-            return callback(null, origin);
+        if (allowedOrigins.includes(origin)) {
+            return callback(null, true);
         }
 
         return callback(new Error('Not allowed by CORS'));
     },
     credentials: true
 }));
+
 
 /* ---------------------------------------------------
    🛡️ SECURITY & LOGGING
