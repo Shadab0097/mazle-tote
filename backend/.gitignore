@@ -1,6 +1,6 @@
 # Dependencies
 node_modules/
-
+src/config/adminSeed.js
 # Environment variables
 .env
 .env.local
