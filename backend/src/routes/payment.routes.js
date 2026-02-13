@@ -11,7 +11,7 @@ dotenv.config();
 
 const { PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET, PAYPAL_API_URL, PAYPAL_CURRENCY } = process.env;
 
-const base = PAYPAL_API_URL || 'https://api-m.sandbox.paypal.com';
+const base = PAYPAL_API_URL;
 const currency = PAYPAL_CURRENCY || 'USD';
 
 /**
