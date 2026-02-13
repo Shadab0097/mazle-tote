@@ -474,7 +474,6 @@ router.post('/paypal/capture-order', protect, async (req, res) => {
                 status: 'Completed'
             };
             await order.save();
-            await order.save();
             console.log(`Payment captured successfully for order ${localOrderId}`);
 
             // --- DECREMENT STOCK ---
