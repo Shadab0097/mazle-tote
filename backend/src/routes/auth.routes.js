@@ -4,6 +4,7 @@ const User = require('../models/User');
 const generateToken = require('../utils/generateToken');
 const client = require('../config/oauth');
 const { protect } = require('../middlewares/userAuth.middleware');
+const sendEmail = require('../utils/sendEmail');
 
 // @desc    Register a new user
 // @route   POST /api/auth/register
