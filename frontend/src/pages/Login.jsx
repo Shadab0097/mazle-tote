@@ -10,7 +10,9 @@ import {
   FiUser,
   FiCheckCircle,
   FiShield,
-  FiCheck
+  FiCheck,
+  FiEye,
+  FiEyeOff
 } from 'react-icons/fi';
 
 const SecurityBadges = () => (
@@ -27,6 +29,7 @@ const SecurityBadges = () => (
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [rememberMe, setRememberMe] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const toast = useToast();
 
   const dispatch = useDispatch();
@@ -105,14 +108,22 @@ const Login = () => {
                 <FiLock size={18} className="md:w-5 md:h-5" />
               </div>
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 name="password"
                 placeholder="••••••••"
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full pl-10 md:pl-12 pr-4 py-3 md:py-4 bg-white border-2 border-gray-100 focus:border-[#8ABEE8] rounded-xl outline-none text-[#2C2C2C] font-medium placeholder-gray-400 text-sm md:text-base transition-all duration-300 shadow-sm focus:shadow-md"
+                className="w-full pl-10 md:pl-12 pr-11 py-3 md:py-4 bg-white border-2 border-gray-100 focus:border-[#8ABEE8] rounded-xl outline-none text-[#2C2C2C] font-medium placeholder-gray-400 text-sm md:text-base transition-all duration-300 shadow-sm focus:shadow-md"
                 required
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-[#8ABEE8] transition-colors duration-200 cursor-pointer"
+                tabIndex={-1}
+              >
+                {showPassword ? <FiEyeOff size={18} className="md:w-5 md:h-5" /> : <FiEye size={18} className="md:w-5 md:h-5" />}
+              </button>
             </div>
           </div>
 

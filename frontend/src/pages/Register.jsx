@@ -10,7 +10,9 @@ import {
   FiArrowRight,
   FiShield,
   FiCheck,
-  FiCheckCircle
+  FiCheckCircle,
+  FiEye,
+  FiEyeOff
 } from 'react-icons/fi';
 
 const SecurityBadges = () => (
@@ -32,6 +34,8 @@ const Register = () => {
     confirmPassword: ''
   });
   const [agreed, setAgreed] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const toast = useToast();
 
   const dispatch = useDispatch();
@@ -142,14 +146,22 @@ const Register = () => {
                 <FiLock size={20} />
               </div>
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 name="password"
                 placeholder="••••••••"
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full pl-12 pr-4 py-4 bg-white border-2 border-gray-100 focus:border-[#8ABEE8] rounded-xl outline-none text-[#2C2C2C] font-medium placeholder-gray-400 transition-all duration-300 shadow-sm focus:shadow-md"
+                className="w-full pl-12 pr-11 py-4 bg-white border-2 border-gray-100 focus:border-[#8ABEE8] rounded-xl outline-none text-[#2C2C2C] font-medium placeholder-gray-400 transition-all duration-300 shadow-sm focus:shadow-md"
                 required
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-[#8ABEE8] transition-colors duration-200 cursor-pointer"
+                tabIndex={-1}
+              >
+                {showPassword ? <FiEyeOff size={20} /> : <FiEye size={20} />}
+              </button>
             </div>
           </div>
 
@@ -160,14 +172,22 @@ const Register = () => {
                 <FiLock size={20} />
               </div>
               <input
-                type="password"
+                type={showConfirmPassword ? 'text' : 'password'}
                 name="confirmPassword"
                 placeholder="••••••••"
                 value={formData.confirmPassword}
                 onChange={handleChange}
-                className="w-full pl-12 pr-4 py-4 bg-white border-2 border-gray-100 focus:border-[#8ABEE8] rounded-xl outline-none text-[#2C2C2C] font-medium placeholder-gray-400 transition-all duration-300 shadow-sm focus:shadow-md"
+                className="w-full pl-12 pr-11 py-4 bg-white border-2 border-gray-100 focus:border-[#8ABEE8] rounded-xl outline-none text-[#2C2C2C] font-medium placeholder-gray-400 transition-all duration-300 shadow-sm focus:shadow-md"
                 required
               />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-[#8ABEE8] transition-colors duration-200 cursor-pointer"
+                tabIndex={-1}
+              >
+                {showConfirmPassword ? <FiEyeOff size={20} /> : <FiEye size={20} />}
+              </button>
             </div>
           </div>
 
