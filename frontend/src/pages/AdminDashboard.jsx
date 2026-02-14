@@ -352,8 +352,12 @@ const AdminDashboard = () => {
                                             </button>
                                         </td>
                                         <td className="py-4">
-                                            <div className="text-sm text-[#2C2C2C] max-w-[200px] truncate" title={order.items?.map(i => i.name).join(', ')}>
-                                                {order.items?.map(i => i.name).join(', ') || '-'}
+                                            <div className="text-sm text-[#2C2C2C] max-w-[220px]">
+                                                {order.items?.length > 0 ? order.items.map((item, idx) => (
+                                                    <div key={idx} className="truncate" title={item.name}>
+                                                        {item.name} <span className="text-gray-400">×{item.quantity}</span>
+                                                    </div>
+                                                )) : '-'}
                                             </div>
                                         </td>
                                         <td className="py-4 text-gray-500 text-xs font-medium">

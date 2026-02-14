@@ -192,12 +192,25 @@ const ProductDetail = () => {
               <p className="text-2xl md:text-3xl text-gray-500 font-medium">${product.price}</p>
             </div>
 
-            <div className="prose prose-base md:prose-lg text-gray-600 mb-10 leading-relaxed">
-              <p>{product.description}</p>
+            <div className="prose prose-base md:prose-lg text-gray-600 mb-10 leading-relaxed max-w-none
+              [&_h3]:text-lg [&_h3]:font-bold [&_h3]:text-[#2C2C2C] [&_h3]:mt-4 [&_h3]:mb-2
+              [&_h4]:text-base [&_h4]:font-bold [&_h4]:text-[#2C2C2C] [&_h4]:mt-3 [&_h4]:mb-1
+              [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:my-2
+              [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:my-2
+              [&_li]:my-1
+              [&_b]:font-bold [&_strong]:font-bold
+              [&_i]:italic [&_em]:italic
+              [&_u]:underline"
+            >
+              {product.description?.includes('<') ? (
+                <div dangerouslySetInnerHTML={{ __html: product.description }} />
+              ) : (
+                <p className="whitespace-pre-wrap">{product.description}</p>
+              )}
             </div>
 
             {/* Features */}
-            <div className="mb-8 py-6 border-y border-gray-100">
+            {/* <div className="mb-8 py-6 border-y border-gray-100">
               <div className="grid grid-cols-2 gap-4">
                 {features.map((feature, i) => (
                   <div key={i} className="flex items-center gap-3 text-gray-600 text-sm">
@@ -206,7 +219,7 @@ const ProductDetail = () => {
                   </div>
                 ))}
               </div>
-            </div>
+            </div> */}
 
             {/* Actions */}
             <div className="mt-auto space-y-8">
@@ -239,14 +252,14 @@ const ProductDetail = () => {
                 </button>
               </div>
 
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-6 text-xs font-bold text-gray-400 uppercase tracking-widest pt-4 border-t border-gray-50">
+              {/* <div className="flex flex-col sm:flex-row items-center justify-center gap-6 text-xs font-bold text-gray-400 uppercase tracking-widest pt-4 border-t border-gray-50">
                 <span className="flex items-center gap-2">
                   <FiShield size={16} /> Lifetime Warranty
                 </span>
                 <span className="flex items-center gap-2">
                   <FiGlobe size={16} /> Free Shipping Worldwide
                 </span>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

@@ -7,6 +7,7 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { useToast } from '../context/ToastContext';
+import RichTextEditor from '../components/RichTextEditor';
 
 const AdminProducts = () => {
     const dispatch = useDispatch();
@@ -305,14 +306,12 @@ const AdminProducts = () => {
                                 </div>
                                 <div className="col-span-2">
                                     <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Description</label>
-                                    <textarea
-                                        rows="4"
-                                        className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8ABEE8]/50 resize-none font-medium text-[#2C2C2C]"
-                                        placeholder="Describe the product..."
-                                        required
+                                    <RichTextEditor
                                         value={formData.description}
-                                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                    ></textarea>
+                                        onChange={(html) => setFormData({ ...formData, description: html })}
+                                        placeholder="Describe the product..."
+                                        rows={6}
+                                    />
                                 </div>
                                 <div>
                                     <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Price ($)</label>
