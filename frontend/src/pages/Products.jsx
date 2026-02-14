@@ -5,6 +5,7 @@ import { fetchProducts } from '../store/productSlice';
 import { addToCart } from '../store/cartSlice';
 import { Container } from '@/components/ui/Container';
 import { FiSearch, FiX, FiShoppingBag } from 'react-icons/fi';
+import { stripHtmlForPreview } from '../utils/stripHtml';
 
 // --- Product Card Component ---
 const ProductCard = memo(({ product, onAddToCart }) => (
@@ -62,7 +63,7 @@ const ProductCard = memo(({ product, onAddToCart }) => (
         <h3 className="text-xl font-bold text-[var(--color-text)] mb-1 group-hover:text-[var(--color-primary)] transition-colors">
           {product.name}
         </h3>
-        <p className="text-gray-500 text-sm mb-3 line-clamp-2">{product.description || '100% Organic Cotton Canvas'}</p>
+        <p className="text-gray-500 text-sm mb-3 line-clamp-2">{stripHtmlForPreview(product.description)}</p>
       </div>
       <div className="flex items-center justify-between mt-2">
         <span className="text-lg font-bold text-[var(--color-text)]">${product.price}</span>

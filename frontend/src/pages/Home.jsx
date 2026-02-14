@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/Button';
 import { Card, CardContent } from '@/components/ui/Card';
 import { FiArrowRight, FiShoppingBag, FiGlobe, FiSun, FiShield, FiHeart, FiBook } from 'react-icons/fi';
 import { FaHeart } from 'react-icons/fa';
+import { stripHtmlForPreview } from '../utils/stripHtml';
 import { motion } from 'framer-motion';
 
 // --- Hero Component ---
@@ -383,7 +384,7 @@ const ProductCardComponent = memo(({ product, onAddToCart }) => (
                 <Link to={`/products/${product.slug}`}>
                     <h3 className="text-xl font-bold text-[var(--color-text)] mb-1 group-hover:text-[var(--color-primary)] transition-colors cursor-pointer">{product.name}</h3>
                 </Link>
-                <p className="text-gray-500 text-sm mb-3 line-clamp-2">{product.description || "100% Organic Cotton Canvas"}</p>
+                <p className="text-gray-500 text-sm mb-3 line-clamp-2">{stripHtmlForPreview(product.description)}</p>
             </div>
             <div className="flex items-center justify-between mt-2">
                 <span className="text-lg font-bold text-[var(--color-text)]">${product.price}</span>
