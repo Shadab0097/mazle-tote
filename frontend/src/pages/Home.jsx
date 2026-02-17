@@ -355,6 +355,8 @@ const ProductCardComponent = memo(({ product, onAddToCart }) => (
                 </div>
             )}
 
+            {/* ---------------------------------------------------------------------------- */}
+
             {/* Animated Hanging Pre-Order Badge */}
             <div className="absolute -top-1 right-4 z-20 animate-sway origin-top">
                 <div className="bg-[var(--color-primary)] text-white w-16 h-24 shadow-lg flex flex-col items-center justify-center p-2 clip-path-badge before:absolute before:inset-0 before:bg-gradient-to-b before:from-white/20 before:to-transparent">
@@ -365,8 +367,18 @@ const ProductCardComponent = memo(({ product, onAddToCart }) => (
                 </div>
             </div>
 
+
+            {/* ------------------------------------------------------------------------------------------------- */}
+
+
+
             {/* Tag - Logic could be expanded */}
-            {product.stock < 10 && product.stock > 0 && (
+            {product.isHottest && (
+                <div className="absolute top-4 left-4 bg-gradient-to-r from-orange-500 to-red-500 text-white text-[10px] md:text-xs font-bold px-3 py-1.5 uppercase tracking-wide rounded-full shadow-md flex items-center gap-1.5 z-10">
+                    <span className="text-sm">🔥</span> Hottest
+                </div>
+            )}
+            {!product.isHottest && product.stock < 10 && product.stock > 0 && (
                 <div className="absolute top-4 left-4 bg-red-600 text-white text-[10px] md:text-xs font-bold px-3 py-1.5 uppercase tracking-wide rounded-full shadow-md flex items-center gap-1.5 animate-pulse">
                     <span className="text-sm">🔥</span> Hurry up! Few left
                 </div>

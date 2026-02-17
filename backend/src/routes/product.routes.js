@@ -8,7 +8,7 @@ const { protectAdmin } = require('../middlewares/adminAuth.middleware');
 // @access  Public
 productRouter.get('/', async (req, res) => {
     try {
-        const products = await Product.find({ isActive: true });
+        const products = await Product.find({ isActive: true }).sort({ isHottest: -1, createdAt: -1 });
         res.json(products);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -20,7 +20,7 @@ productRouter.get('/', async (req, res) => {
 // @access  Private (Admin)
 productRouter.post('/', protectAdmin, async (req, res) => {
     try {
-        const { name, slug, description, price, images, stock } = req.body;
+        const { name, slug, description, price, images, stock, isHottest } = req.body;
 
         const productExists = await Product.findOne({ slug });
 
@@ -36,6 +36,7 @@ productRouter.post('/', protectAdmin, async (req, res) => {
             price,
             images,
             stock,
+            isHottest: isHottest || false,
         });
 
         const createdProduct = await product.save();
@@ -114,7 +115,7 @@ productRouter.get('/:slug', async (req, res) => {
 // @access  Private (Admin)
 productRouter.put('/:id', protectAdmin, async (req, res) => {
     try {
-        const { name, slug, description, price, images, stock, isActive } = req.body;
+        const { name, slug, description, price, images, stock, isActive, isHottest } = req.body;
 
         const product = await Product.findById(req.params.id);
 
@@ -126,6 +127,7 @@ productRouter.put('/:id', protectAdmin, async (req, res) => {
             product.images = images || product.images;
             product.stock = stock !== undefined ? stock : product.stock;
             product.isActive = isActive !== undefined ? isActive : product.isActive;
+            product.isHottest = isHottest !== undefined ? isHottest : product.isHottest;
 
             const updatedProduct = await product.save();
             res.json(updatedProduct);

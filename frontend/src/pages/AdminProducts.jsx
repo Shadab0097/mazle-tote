@@ -25,7 +25,7 @@ const AdminProducts = () => {
     const fileInputRef = useRef(null);
 
     const [formData, setFormData] = useState({
-        name: '', slug: '', description: '', price: '', stock: '', images: []
+        name: '', slug: '', description: '', price: '', stock: '', images: [], isHottest: false
     });
     const toast = useToast();
 
@@ -118,10 +118,10 @@ const AdminProducts = () => {
 
             setShowModal(false);
             setEditingProduct(null);
-            setFormData({ name: '', slug: '', description: '', price: '', stock: '', images: [] });
+            setFormData({ name: '', slug: '', description: '', price: '', stock: '', images: [], isHottest: false });
             setImageFiles([]);
             setImagePreviews([]);
-            setFormData({ name: '', slug: '', description: '', price: '', stock: '', images: [] });
+            setFormData({ name: '', slug: '', description: '', price: '', stock: '', images: [], isHottest: false });
             setImageFiles([]);
             setImagePreviews([]);
             dispatch(fetchAllProducts()); // Refresh Redux state
@@ -140,6 +140,7 @@ const AdminProducts = () => {
             price: product.price.toString(),
             stock: product.stock.toString(),
             images: product.images || [],
+            isHottest: product.isHottest || false,
         });
         setImagePreviews(product.images?.map(url => ({ url, isNew: false })) || []);
         setImageFiles([]);
@@ -253,7 +254,7 @@ const AdminProducts = () => {
                                                     )}
                                                 </div>
                                                 <div>
-                                                    <h3 className="font-bold text-[#2C2C2C] text-sm">{product.name}</h3>
+                                                    <h3 className="font-bold text-[#2C2C2C] text-sm flex items-center gap-1.5">{product.isHottest && <span title="Hottest">🔥</span>}{product.name}</h3>
                                                     <p className="text-xs text-gray-400 font-medium mt-0.5">/{product.slug}</p>
                                                 </div>
                                             </div>
@@ -342,6 +343,18 @@ const AdminProducts = () => {
                                         value={formData.slug}
                                         onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
                                     />
+                                </div>
+                                <div className="col-span-2 flex items-center gap-3 py-2">
+                                    <button
+                                        type="button"
+                                        onClick={() => setFormData({ ...formData, isHottest: !formData.isHottest })}
+                                        className={`relative w-12 h-6 rounded-full transition-colors duration-200 ${formData.isHottest ? 'bg-orange-500' : 'bg-gray-300'}`}
+                                    >
+                                        <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200 ${formData.isHottest ? 'translate-x-6' : ''}`} />
+                                    </button>
+                                    <label className="text-sm font-bold text-gray-600 flex items-center gap-1.5 cursor-pointer" onClick={() => setFormData({ ...formData, isHottest: !formData.isHottest })}>
+                                        🔥 Mark as Hottest
+                                    </label>
                                 </div>
                                 <div className="col-span-2">
                                     <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Product Images</label>

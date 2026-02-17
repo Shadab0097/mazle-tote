@@ -35,7 +35,12 @@ const ProductCard = memo(({ product, onAddToCart }) => (
         </div>
       </div>
 
-      {product.stock < 10 && product.stock > 0 && (
+      {product.isHottest && (
+        <span className="absolute top-4 left-4 bg-gradient-to-r from-orange-500 to-red-500 text-white text-[10px] md:text-xs font-bold px-3 py-1.5 uppercase tracking-wide rounded-full shadow-md flex items-center gap-1.5 z-10">
+          <span className="text-sm">🔥</span> Hottest
+        </span>
+      )}
+      {!product.isHottest && product.stock < 10 && product.stock > 0 && (
         <span className="absolute top-4 left-4 bg-red-600 text-white text-[10px] md:text-xs font-bold px-3 py-1.5 uppercase tracking-wide rounded-full shadow-md flex items-center gap-1.5 animate-pulse">
           <span className="text-sm">🔥</span> Hurry up! Few left
         </span>

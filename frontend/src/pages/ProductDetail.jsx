@@ -169,15 +169,22 @@ const ProductDetail = () => {
           <div className="flex flex-col h-full">
             <div className="mb-8">
               <div className="flex items-center justify-between mb-4">
-                {product.stock > 0 ? (
-                  <span className="bg-green-50 text-green-600 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
-                    In Stock
-                  </span>
-                ) : (
-                  <span className="bg-red-50 text-red-600 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
-                    Out of Stock
-                  </span>
-                )}
+                <div className="flex items-center gap-2">
+                  {product.stock > 0 ? (
+                    <span className="bg-green-50 text-green-600 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                      In Stock
+                    </span>
+                  ) : (
+                    <span className="bg-red-50 text-red-600 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                      Out of Stock
+                    </span>
+                  )}
+                  {product.isHottest && (
+                    <span className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1">
+                      🔥 Hottest
+                    </span>
+                  )}
+                </div>
               </div>
 
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-[var(--color-text)] mb-4 leading-tight">
