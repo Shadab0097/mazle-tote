@@ -7,7 +7,11 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setCharityTrust, clearCart } from '@/store/cartSlice';
 import api from '@/services/api';
 import { useToast } from '@/context/ToastContext';
-import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
+import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js';
+
+const PAYPAL_CLIENT_ID = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || 'YOUR_PAYPAL_CLIENT_ID';
+const PAYPAL_CURRENCY = process.env.NEXT_PUBLIC_PAYPAL_CURRENCY || 'INR';
+const paypalOptions = { clientId: PAYPAL_CLIENT_ID, currency: PAYPAL_CURRENCY, intent: 'capture' };
 import {
     FiCheck,
     FiArrowRight,
@@ -628,8 +632,10 @@ const Checkout = () => {
 
 export default function CheckoutPage() {
     return (
-        <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="w-10 h-10 border-4 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin"></div></div>}>
-            <Checkout />
-        </Suspense>
+        <PayPalScriptProvider options={paypalOptions}>
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="w-10 h-10 border-4 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin"></div></div>}>
+                <Checkout />
+            </Suspense>
+        </PayPalScriptProvider>
     );
 }

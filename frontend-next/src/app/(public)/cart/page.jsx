@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -31,6 +31,9 @@ const Cart = () => {
   const { isAuthenticated } = useSelector((state) => state.auth);
   const toast = useToast();
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => { setMounted(true); }, []);
 
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const shipping = SHIPPING_COST;
@@ -53,6 +56,15 @@ const Cart = () => {
     setShowCheckoutModal(false);
     router.push('/login', { state: { from: '/cart' } });
   };
+
+  // Show skeleton until client hydration is complete to avoid SSR mismatch
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center">
+        <div className="w-10 h-10 border-4 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   if (items.length === 0) {
     return (

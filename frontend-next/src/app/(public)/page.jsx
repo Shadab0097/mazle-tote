@@ -13,7 +13,6 @@ import { Card, CardContent } from '@/components/ui/Card';
 import { FiArrowRight, FiShoppingBag, FiGlobe, FiSun, FiShield, FiHeart, FiBook } from 'react-icons/fi';
 import { FaHeart } from 'react-icons/fa';
 import { stripHtmlForPreview } from '@/utils/stripHtml';
-import { motion } from 'framer-motion';
 
 // --- Hero Component ---
 const Hero = () => {

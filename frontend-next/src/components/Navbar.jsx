@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
 import { useSelector, useDispatch } from 'react-redux';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { FiShoppingBag, FiMenu, FiX, FiUser, FiPackage } from 'react-icons/fi';
 import { logoutUser } from '@/store/authSlice';
 import { Button } from '@/components/ui/Button';
@@ -34,10 +34,17 @@ const Navbar = () => {
 
     // Handle scroll for navbar styling
     useEffect(() => {
+        let ticking = false;
         const handleScroll = () => {
-            setIsScrolled(window.scrollY > 10);
+            if (!ticking) {
+                requestAnimationFrame(() => {
+                    setIsScrolled(window.scrollY > 10);
+                    ticking = false;
+                });
+                ticking = true;
+            }
         };
-        window.addEventListener('scroll', handleScroll);
+        window.addEventListener('scroll', handleScroll, { passive: true });
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
@@ -53,23 +60,23 @@ const Navbar = () => {
         }
     }, [isOpen]);
 
-    const handleLogout = () => {
+    const handleLogout = useCallback(() => {
         dispatch(logoutUser());
         toast.info('Logged out successfully');
         router.push('/');
-    };
+    }, [dispatch, toast, router]);
 
-    const navLinks = [
+    const navLinks = useMemo(() => [
         { name: 'Shop', path: '/products' },
         { name: 'About Us', path: '/about' },
         { name: 'Contact', path: '/contact' },
-    ];
+    ], []);
 
-    const isActive = (path) => pathname === path;
+    const isActive = useCallback((path) => pathname === path, [pathname]);
 
-    const scrollToTop = () => {
+    const scrollToTop = useCallback(() => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
+    }, []);
 
     return (
         <nav

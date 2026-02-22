@@ -1,7 +1,7 @@
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import ScrollToTop from '@/components/ScrollToTop';
-import NewsletterModal from '@/components/NewsletterModal';
+import LazyNewsletterModal from '@/components/LazyNewsletterModal';
 import JsonLd from '@/components/JsonLd';
 
 export default function PublicLayout({ children }) {
@@ -9,7 +9,7 @@ export default function PublicLayout({ children }) {
         <div className="min-h-screen flex flex-col">
             <JsonLd />
             <ScrollToTop />
-            <NewsletterModal />
+            <LazyNewsletterModal />
             <Navbar />
             <main className="flex-grow">
                 {children}
@@ -18,4 +18,3 @@ export default function PublicLayout({ children }) {
         </div>
     );
 }
-
