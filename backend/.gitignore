@@ -7,6 +7,7 @@ src/config/adminSeed.js
 .env.development.local
 .env.test.local
 .env.production.local
+readme.txt
 
 # Logs
 npm-debug.log*

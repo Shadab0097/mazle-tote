@@ -43,7 +43,8 @@ app.use(cors({
             'https://mazeltote.com',
             'https://www.mazeltote.com',
             'https://mazle-tote.pages.dev',
-            'http://localhost:5173'
+            'http://localhost:5173',
+            'http://localhost:3000'
         ];
 
         if (allowedOrigins.includes(origin)) {
