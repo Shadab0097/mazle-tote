@@ -343,7 +343,7 @@ const AdminProducts = () => {
                                         className="font-mono text-sm bg-gray-50 h-10"
                                         required
                                         value={formData.slug}
-                                        onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                                        onChange={(e) => setFormData({ ...formData, slug: e.target.value.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') })}
                                     />
                                 </div>
                                 <div className="col-span-2 flex items-center gap-3 py-2">
