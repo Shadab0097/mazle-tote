@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useSelector, useDispatch } from 'react-redux';
@@ -76,9 +77,9 @@ const Cart = () => {
           <div className="lg:col-span-2 space-y-6">
             {items.map((item) => (
               <Card key={item.product} className="p-4 md:p-6 flex gap-4 md:gap-6 items-start">
-                <div className="w-24 h-24 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+                <div className="w-24 h-24 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0 relative">
                   {item.image ? (
-                    <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                    <Image src={item.image} alt={item.name} fill sizes="96px" className="object-cover" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-gray-300"><FiShoppingBag /></div>
                   )}

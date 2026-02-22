@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, Suspense } from 'react';
+import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSelector, useDispatch } from 'react-redux';
 import { setCharityTrust, clearCart } from '@/store/cartSlice';
@@ -549,7 +550,7 @@ const Checkout = () => {
                                     {items.map((item) => (
                                         <div key={item.product} className="flex gap-5 group">
                                             <div className="w-20 h-20 rounded-2xl bg-[#F5F8FA] overflow-hidden flex-shrink-0 relative border border-gray-100 group-hover:border-[#8ABEE8]/30 transition-colors">
-                                                <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                                                <Image src={item.image} alt={item.name} fill sizes="80px" className="object-cover group-hover:scale-110 transition-transform duration-500" />
                                             </div>
                                             <div className="flex-grow pt-1">
                                                 <h4 className="text-sm font-bold text-[#2C2C2C] mb-1 leading-snug line-clamp-1">{item.name}</h4>

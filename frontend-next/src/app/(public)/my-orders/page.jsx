@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchMyOrders } from '@/store/ordersSlice';
@@ -152,11 +153,13 @@ const MyOrders = () => {
                                         <div className="space-y-6 mb-8">
                                             {order.items.map((item, idx) => (
                                                 <div key={idx} className="flex gap-4 items-start">
-                                                    <div className="w-16 h-16 md:w-24 md:h-24 rounded-xl overflow-hidden bg-gray-100 border border-gray-200 flex-shrink-0">
-                                                        <img
+                                                    <div className="w-16 h-16 md:w-24 md:h-24 rounded-xl overflow-hidden bg-gray-100 border border-gray-200 flex-shrink-0 relative">
+                                                        <Image
                                                             src={item.product?.images?.[0] || 'https://images.unsplash.com/photo-1591561954557-26941169b49e?auto=format&fit=crop&q=80&w=200'}
                                                             alt={item.name}
-                                                            className="w-full h-full object-cover"
+                                                            fill
+                                                            sizes="96px"
+                                                            className="object-cover"
                                                         />
                                                     </div>
                                                     <div className="flex-grow pt-1">

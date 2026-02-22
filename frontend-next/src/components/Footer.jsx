@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState } from 'react';
 import { Container } from '@/components/ui/Container';
 import { Button } from '@/components/ui/Button';
@@ -45,7 +46,7 @@ const Footer = () => {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-10 mb-8 md:mb-10">
                     <div className="col-span-2 md:col-span-1 flex flex-col items-center md:items-start text-center md:text-left">
                         <Link href="/" onClick={scrollToTop} className="inline-block mb-3">
-                            <img src="/logo.png" alt="Mazel Tote" className="h-32 md:h-32 w-auto object-contain" />
+                            <Image src="/logo.png" alt="Mazel Tote" width={128} height={128} className="h-32 md:h-32 w-auto object-contain" />
                         </Link>
                         <p className="text-gray-500 text-xs leading-relaxed mb-4 max-w-xs">
                             Elevating everyday carry with sustainable luxury. Designed for the modern professional.

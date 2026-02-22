@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
 import { useSelector, useDispatch } from 'react-redux';
 import { useState, useEffect } from 'react';
@@ -83,7 +84,7 @@ const Navbar = () => {
                 <div className="flex justify-between items-center h-24">
                     {/* Logo */}
                     <Link href="/" onClick={scrollToTop} className="flex items-center gap-2 group">
-                        <img src="/logo.png" alt="Mazel Tote" className="h-28 md:h-32 w-auto object-contain" />
+                        <Image src="/logo.png" alt="Mazel Tote" width={128} height={128} className="h-28 md:h-32 w-auto object-contain" />
                     </Link>
 
                     {/* Desktop Navigation */}

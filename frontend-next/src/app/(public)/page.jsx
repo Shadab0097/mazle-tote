@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useCallback, memo } from 'react';
+import Image from 'next/image';
 import { useDispatch, useSelector } from 'react-redux';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -90,10 +91,14 @@ const Hero = () => {
                     {/* Hero Image */}
                     <div className="lg:w-1/2 relative order-1 lg:order-2 w-full max-w-md lg:max-w-none mx-auto lg:pr-12">
                         <div className="relative z-10 rounded-3xl overflow-hidden shadow-2xl transform rotate-2 hover:rotate-0 transition-all duration-700 ease-out border-4 lg:border-8 border-white bg-gray-100">
-                            <img
+                            <Image
                                 src="/hero.png"
                                 alt="Mazel Tote Bag Model"
+                                width={800}
+                                height={1000}
+                                sizes="(max-width: 1024px) 100vw, 50vw"
                                 className="w-full h-[400px] lg:h-[600px] object-cover"
+                                priority
                             />
 
                             {/* Floating Badge */}
@@ -152,9 +157,12 @@ const MeetFounder = () => {
                     <div className="lg:w-1/2 relative order-1">
                         <div className="absolute inset-0 bg-[var(--color-primary)]/10 rounded-[2rem] transform rotate-3 scale-105 -z-10"></div>
                         <div className="relative rounded-[2rem] overflow-hidden shadow-2xl border-4 border-white">
-                            <img
+                            <Image
                                 src="/founder.png"
                                 alt="Brielle Harbur - Founder"
+                                width={800}
+                                height={1000}
+                                sizes="(max-width: 1024px) 100vw, 50vw"
                                 className="w-full h-auto object-cover transform hover:scale-105 transition-transform duration-700"
                             />
                         </div>
@@ -345,12 +353,12 @@ const ProductCardComponent = memo(({ product, onAddToCart }) => (
     <div className="w-full h-full group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 flex flex-col">
         <div className="relative overflow-hidden aspect-[4/5]">
             {product.images?.[0] ? (
-                <img
+                <Image
                     src={product.images[0]}
                     alt={product.name}
-                    loading="lazy"
-                    decoding="async"
-                    className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    className="object-cover transform group-hover:scale-110 transition-transform duration-700"
                 />
             ) : (
                 <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-300">

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useCallback, memo } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
@@ -15,12 +16,12 @@ const ProductCard = memo(({ product, onAddToCart }) => (
   <div className="w-full h-full group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 flex flex-col">
     <div className="relative overflow-hidden aspect-[4/5]">
       {product.images?.[0] ? (
-        <img
+        <Image
           src={product.images[0]}
           alt={product.name}
-          loading="lazy"
-          decoding="async"
-          className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
+          fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          className="object-cover transform group-hover:scale-110 transition-transform duration-700"
         />
       ) : (
         <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-300">

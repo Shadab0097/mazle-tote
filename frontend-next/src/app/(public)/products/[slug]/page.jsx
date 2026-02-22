@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useDispatch, useSelector } from 'react-redux';
@@ -154,7 +155,7 @@ const ProductDetail = () => {
                                             : 'border-transparent hover:border-gray-200'
                                             }`}
                                     >
-                                        <img src={img} alt="" className="w-full h-full object-cover" loading="lazy" decoding="async" />
+                                        <Image src={img} alt="" fill sizes="25vw" className="object-cover" />
                                     </button>
                                 ))}
                             </div>

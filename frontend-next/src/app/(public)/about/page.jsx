@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { FiScissors, FiArrowRight, FiStar } from 'react-icons/fi';
 import { Container } from '@/components/ui/Container';
 
@@ -21,10 +22,14 @@ const About = () => {
                         <div className="lg:w-1/2 relative mb-16 lg:mb-0">
                             {/* Main Tall Image */}
                             <div className="relative z-10 rounded-[2.5rem] overflow-hidden shadow-2xl w-full max-w-md mx-auto lg:mx-0 border-8 border-white">
-                                <img
+                                <Image
                                     src="/Tu-Bav-Tote.png"
                                     alt="Artisan working on bag"
+                                    width={800}
+                                    height={1000}
+                                    sizes="(max-width: 1024px) 100vw, 50vw"
                                     className="w-full h-[500px] lg:h-[650px] object-cover hover:scale-105 transition-transform duration-700"
+                                    priority
                                 />
                                 {/* Overlay Content */}
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex flex-col justify-end p-8 text-white">
@@ -37,10 +42,12 @@ const About = () => {
 
                             {/* Floating Offset Image - overlay hanging on mobile with space reserved below */}
                             <div className="absolute sm:-bottom-24  -bottom-8 -right-2 lg:-bottom-24 lg:-right-12 w-32 h-32 lg:w-72 lg:h-72 rounded-[1.5rem] lg:rounded-[2.5rem] overflow-hidden shadow-2xl border-4 lg:border-8 border-white z-20 hover:-translate-y-2 transition-transform duration-500">
-                                <img
+                                <Image
                                     src="/founder-story.png"
                                     alt="Founder designing"
-                                    className="w-full h-full object-cover"
+                                    fill
+                                    sizes="288px"
+                                    className="object-cover"
                                 />
                             </div>
 
