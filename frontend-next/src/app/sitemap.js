@@ -1,4 +1,4 @@
-export default function sitemap() {
+export default async function sitemap() {
     const baseUrl = 'https://mazeltote.com';
 
     // Static pages with their priorities
@@ -10,8 +10,25 @@ export default function sitemap() {
         { url: `${baseUrl}/privacy`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.3 },
     ];
 
-    // In production, you can also dynamically fetch product slugs from your API
-    // and add individual product pages here for better SEO
+    // Dynamically fetch all product slugs for individual product pages
+    let productPages = [];
+    try {
+        const apiUrl = process.env.BACKEND_URL || 'http://localhost:5000';
+        const res = await fetch(`${apiUrl}/api/products`, {
+            next: { revalidate: 3600 }, // Rebuild sitemap hourly
+        });
+        if (res.ok) {
+            const products = await res.json();
+            productPages = products.map((product) => ({
+                url: `${baseUrl}/products/${product.slug}`,
+                lastModified: new Date(product.updatedAt || product.createdAt),
+                changeFrequency: 'weekly',
+                priority: 0.8,
+            }));
+        }
+    } catch {
+        // Silently fail — static pages will still be indexed
+    }
 
-    return staticPages;
+    return [...staticPages, ...productPages];
 }

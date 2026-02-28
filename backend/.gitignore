@@ -8,6 +8,7 @@ src/config/adminSeed.js
 .env.test.local
 .env.production.local
 readme.txt
+scripts/fix_slugs.js
 
 # Logs
 npm-debug.log*

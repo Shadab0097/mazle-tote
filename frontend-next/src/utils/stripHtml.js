@@ -1,23 +1,26 @@
 /**
  * Strips HTML tags, entities, and section titles from a description
  * to produce a clean plain-text preview for product cards.
+ * Works in both server and client environments.
  */
 export const stripHtmlForPreview = (html) => {
     if (!html) return '';
 
-    // Create a temporary DOM element to properly parse HTML
-    const temp = document.createElement('div');
-    temp.innerHTML = html;
-
-    // Remove all heading elements (h1-h6) entirely
-    temp.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach(el => el.remove());
-
-    // Remove short bold/strong text (section titles like "Product Overview", "Material", "Size")
-    temp.querySelectorAll('b, strong').forEach(el => {
-        const text = el.textContent.trim();
-        if (text.length < 30) el.remove();
-    });
-
-    // Get clean text content (automatically strips all tags & decodes entities)
-    return temp.textContent?.replace(/\s+/g, ' ').trim() || '';
+    return html
+        // 1. Remove headings entirely so their text isn't in the preview
+        .replace(/<h[1-6][^>]*>.*?<\/h[1-6]>/gi, '')
+        // 2. Remove strong/b tags entirely if they are short (e.g. "Material:")
+        .replace(/<(b|strong)[^>]*>([^<]{1,30})<\/\1>/gi, '')
+        // 3. Remove all other HTML tags WITHOUT adding spaces (matches browser textContent exact behavior)
+        .replace(/<[^>]+>/g, '')
+        // 4. Decode common HTML entities
+        .replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"')
+        .replace(/&#039;/g, "'")
+        .replace(/&nbsp;/g, ' ')
+        // 5. Normalize whitespace
+        .replace(/\s+/g, ' ')
+        .trim();
 };

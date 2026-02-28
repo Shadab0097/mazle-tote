@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { useDispatch, useSelector } from 'react-redux';
 import { logoutAdmin } from '@/store/authSlice';
 import {
@@ -50,7 +51,7 @@ const AdminLayout = ({ children }) => {
                         </button>
 
                         <Link href="/admin" className="flex items-center gap-2.5">
-                            <img src="/logo.png" alt="Mazel Admin" className="h-14 w-auto object-contain" />
+                            <Image src="/logo.png" alt="Mazel Admin" width={120} height={56} className="h-14 w-auto object-contain" priority />
                         </Link>
                     </div>
 

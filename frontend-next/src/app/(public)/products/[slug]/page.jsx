@@ -1,121 +1,63 @@
-'use client';
-
-import { useEffect, useState } from 'react';
-import Image from 'next/image';
-import { useParams, useRouter } from 'next/navigation';
+import ProductDetailClient from './ProductDetailClient';
 import Link from 'next/link';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchProductBySlug, clearCurrentProduct } from '@/store/productSlice';
-import { addToCart } from '@/store/cartSlice';
-import { useToast } from '@/context/ToastContext';
-import { Container } from '@/components/ui/Container';
 import { Button } from '@/components/ui/Button';
-import {
-    FiChevronLeft,
-    FiMinus,
-    FiPlus,
-    FiShoppingBag,
-    FiShield,
-    FiGlobe,
-} from 'react-icons/fi';
+import { stripHtmlForPreview } from '@/utils/stripHtml';
 
-// Image Zoom Component
-const ImageZoom = ({ src, alt }) => {
-    const [isZoomed, setIsZoomed] = useState(false);
-    const [position, setPosition] = useState({ x: 50, y: 50 });
+async function getProduct(slug) {
+    try {
+        const apiUrl = process.env.BACKEND_URL || 'http://localhost:5000';
+        const res = await fetch(`${apiUrl}/api/products/${slug}`, {
+            cache: 'no-store',
+        });
+        if (!res.ok) return null;
+        return await res.json();
+    } catch {
+        return null;
+    }
+}
 
-    const handleMouseMove = (e) => {
-        if (!isZoomed) return;
-        const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
-        const x = ((e.clientX - left) / width) * 100;
-        const y = ((e.clientY - top) / height) * 100;
-        setPosition({ x, y });
-    };
+export async function generateMetadata({ params }) {
+    const { slug } = await params;
+    const product = await getProduct(slug);
 
-    return (
-        <div
-            className="relative aspect-square rounded-2xl overflow-hidden cursor-zoom-in bg-gray-100 group"
-            onClick={() => setIsZoomed(!isZoomed)}
-            onMouseMove={handleMouseMove}
-            onMouseLeave={() => setIsZoomed(false)}
-        >
-            <img
-                src={src}
-                alt={alt}
-                className="w-full h-full object-cover transition-transform duration-300"
-                style={{
-                    transformOrigin: `${position.x}% ${position.y}%`,
-                    transform: isZoomed ? 'scale(2)' : 'scale(1)',
-                }}
-            />
-            {!isZoomed && (
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors flex items-center justify-center">
-                    <span className="text-xs font-bold uppercase tracking-wider bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-                        Click to zoom
-                    </span>
-                </div>
-            )}
-        </div>
-    );
-};
-
-const ProductDetail = () => {
-    const { slug } = useParams();
-    const router = useRouter();
-    const dispatch = useDispatch();
-    const { currentProduct: product, loading, error } = useSelector((state) => state.products);
-    const toast = useToast();
-    const [quantity, setQuantity] = useState(1);
-    const [activeImage, setActiveImage] = useState('');
-
-    useEffect(() => {
-        dispatch(fetchProductBySlug(slug));
-        window.scrollTo(0, 0);
-        return () => dispatch(clearCurrentProduct());
-    }, [dispatch, slug]);
-
-    useEffect(() => {
-        if (product?.images?.[0]) {
-            setActiveImage(product.images[0]);
-        }
-    }, [product]);
-
-    const handleQuantity = (type) => {
-        if (type === 'minus' && quantity > 1) setQuantity((q) => q - 1);
-        if (type === 'plus' && quantity < (product?.stock || 10)) setQuantity((q) => q + 1);
-    };
-
-    const handleAddToCart = () => {
-        if (product) {
-            dispatch(
-                addToCart({
-                    product: product._id,
-                    name: product.name,
-                    price: product.price,
-                    image: activeImage || product.images?.[0] || '',
-                    quantity,
-                })
-            );
-            toast.success(`Added ${product.name} to cart`);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            router.push('/cart');
-        }
-    };
-
-    if (loading) {
-        return (
-            <div className="min-h-screen flex items-center justify-center bg-white">
-                <div className="w-16 h-16 border-4 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin"></div>
-            </div>
-        );
+    if (!product) {
+        return {
+            title: 'Product Not Found',
+        };
     }
 
-    if (error || !product) {
+    const description = product.description
+        ? stripHtmlForPreview(product.description).slice(0, 160)
+        : `Shop ${product.name} at Mazel Tote. Premium handcrafted tote bag. 100% of profits donated to charity.`;
+
+    return {
+        title: `${product.name} — Mazel Tote`,
+        description,
+        openGraph: {
+            title: `${product.name} — Mazel Tote`,
+            description,
+            images: product.images?.[0] ? [{ url: product.images[0] }] : [],
+            type: 'website',
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: `${product.name} — Mazel Tote`,
+            description,
+            images: product.images?.[0] ? [product.images[0]] : [],
+        },
+    };
+}
+
+export default async function ProductDetail({ params }) {
+    const { slug } = await params;
+    const product = await getProduct(slug);
+
+    if (!product) {
         return (
             <div className="min-h-screen flex items-center justify-center p-4 text-center bg-white">
                 <div>
                     <h2 className="text-3xl font-bold mb-4 text-[var(--color-text)]">Product Not Found</h2>
-                    <p className="text-gray-500 mb-6">The product you're looking for doesn't seem to exist.</p>
+                    <p className="text-gray-500 mb-6">The product you&apos;re looking for doesn&apos;t seem to exist.</p>
                     <Link href="/products">
                         <Button size="lg">Back to Collection</Button>
                     </Link>
@@ -124,131 +66,7 @@ const ProductDetail = () => {
         );
     }
 
-    return (
-        <div className="pt-24 pb-24 lg:pt-32 lg:pb-32 bg-white min-h-screen">
-            <Container>
-                {/* Breadcrumb / Back */}
-                <Link
-                    href="/products"
-                    className="group inline-flex items-center gap-2 text-gray-500 hover:text-[var(--color-primary)] mb-8 font-medium transition-colors"
-                >
-                    <div className="p-2 rounded-full bg-gray-100 group-hover:bg-[var(--color-primary)]/10 transition-colors">
-                        <FiChevronLeft size={20} />
-                    </div>
-                    Back to Collection
-                </Link>
+    return <ProductDetailClient product={product} />;
+}
 
-                <div className="grid lg:grid-cols-2 gap-12 lg:gap-20">
-                    {/* Left Column: Images */}
-                    <div className="space-y-6">
-                        <ImageZoom src={activeImage || product.images?.[0]} alt={product.name} />
-
-                        {/* Thumbnails */}
-                        {product.images && product.images.length > 1 && (
-                            <div className="grid grid-cols-4 gap-4">
-                                {product.images.map((img, idx) => (
-                                    <button
-                                        key={idx}
-                                        onClick={() => setActiveImage(img)}
-                                        className={`relative aspect-square rounded-xl overflow-hidden border-2 transition-all duration-300 ${activeImage === img
-                                            ? 'border-[var(--color-primary)] ring-4 ring-[var(--color-primary)]/10 scale-95'
-                                            : 'border-transparent hover:border-gray-200'
-                                            }`}
-                                    >
-                                        <Image src={img} alt="" fill sizes="25vw" className="object-cover" />
-                                    </button>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Right Column: Info */}
-                    <div className="flex flex-col h-full">
-                        <div className="mb-8">
-                            <div className="flex items-center justify-between mb-4">
-                                <div className="flex items-center gap-2">
-                                    {product.stock > 0 ? (
-                                        <span className="bg-green-50 text-green-600 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
-                                            In Stock
-                                        </span>
-                                    ) : (
-                                        <span className="bg-red-50 text-red-600 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
-                                            Out of Stock
-                                        </span>
-                                    )}
-                                    {product.isHottest && (
-                                        <span className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1">
-                                            🔥 Hottest
-                                        </span>
-                                    )}
-                                </div>
-                            </div>
-
-                            <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-[var(--color-text)] mb-4 leading-tight">
-                                {product.name}
-                            </h1>
-
-                            {/* Pre-Order Banner */}
-                            <div className="inline-block bg-[var(--color-primary)]/10 border-l-4 border-[var(--color-primary)] px-6 py-3 mb-6">
-                                <p className="text-[var(--color-primary)] font-bold text-xs tracking-[0.2em] uppercase mb-1">Coming Soon</p>
-                                <p className="text-[var(--color-text)] font-extrabold text-xl tracking-wide">PRE-ORDER BAGS NOW</p>
-                            </div>
-                            <p className="text-2xl md:text-3xl text-gray-500 font-medium">${product.price}</p>
-                        </div>
-
-                        <div className="prose prose-base md:prose-lg text-gray-600 mb-10 leading-relaxed max-w-none
-              [&_h3]:text-lg [&_h3]:font-bold [&_h3]:text-[#2C2C2C] [&_h3]:mt-4 [&_h3]:mb-2
-              [&_h4]:text-base [&_h4]:font-bold [&_h4]:text-[#2C2C2C] [&_h4]:mt-3 [&_h4]:mb-1
-              [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:my-2
-              [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:my-2
-              [&_li]:my-1
-              [&_b]:font-bold [&_strong]:font-bold
-              [&_i]:italic [&_em]:italic
-              [&_u]:underline"
-                        >
-                            {product.description?.includes('<') ? (
-                                <div dangerouslySetInnerHTML={{ __html: product.description }} />
-                            ) : (
-                                <p className="whitespace-pre-wrap">{product.description}</p>
-                            )}
-                        </div>
-
-                        {/* Actions */}
-                        <div className="mt-auto space-y-8">
-                            <div className="flex flex-col md:flex-row gap-6">
-                                {/* Quantity */}
-                                <div className="flex items-center border border-gray-200 rounded-full px-4 h-10 sm:h-14 w-full md:w-auto justify-between md:justify-start">
-                                    <button
-                                        onClick={() => handleQuantity('minus')}
-                                        className="p-2 hover:text-[var(--color-primary)] transition-colors"
-                                    >
-                                        <FiMinus size={18} />
-                                    </button>
-                                    <span className="w-8 text-center font-bold text-[var(--color-text)]">{quantity}</span>
-                                    <button
-                                        onClick={() => handleQuantity('plus')}
-                                        className="p-2 hover:text-[var(--color-primary)] transition-colors"
-                                    >
-                                        <FiPlus size={18} />
-                                    </button>
-                                </div>
-
-                                {/* Add to Cart */}
-                                <button
-                                    onClick={handleAddToCart}
-                                    disabled={product.stock === 0}
-                                    className="flex-1 bg-[var(--color-text)] text-white rounded-full font-bold text-lg h-16 md:h-14 px-12 py-3 sm:py-4 md:py-0 hover:bg-[var(--color-primary)] hover:shadow-lg hover:shadow-[var(--color-primary)]/30 transition-all duration-300 active:scale-95 flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed w-full md:w-auto"
-                                >
-                                    <FiShoppingBag size={20} />
-                                    Add to Cart
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </Container>
-        </div>
-    );
-};
-
-export default ProductDetail;
+// trigger rebuild

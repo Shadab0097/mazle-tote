@@ -1,14 +1,9 @@
-'use client';
-
-import { usePathname } from 'next/navigation';
-
 /**
- * JSON-LD structured data component.
+ * JSON-LD structured data component (Server Component).
  * Tells Google exactly what your business is so it shows rich results.
+ * Renders Organization + WebSite schemas for all public pages.
  */
 export default function JsonLd() {
-    const pathname = usePathname();
-
     // Organization schema — shows on all pages
     const organizationSchema = {
         "@context": "https://schema.org",
@@ -38,16 +33,6 @@ export default function JsonLd() {
         "alternateName": ["Mazel", "MazelTote", "Mazel Tote Bags"],
         "url": "https://mazeltote.com",
     };
-
-    // Only show on homepage
-    if (pathname !== '/') {
-        return (
-            <script
-                type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
-            />
-        );
-    }
 
     return (
         <>

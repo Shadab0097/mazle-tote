@@ -47,6 +47,21 @@ const RichTextEditor = ({ value, onChange, placeholder = 'Start typing...', rows
         editorRef.current?.focus();
     }, [onChange]);
 
+    const handleFormatBlock = useCallback((tag) => {
+        let currentBlock = '';
+        try {
+            currentBlock = document.queryCommandValue('formatBlock');
+        } catch (e) {
+            // Ignore
+        }
+
+        if (currentBlock && currentBlock.toLowerCase() === tag.toLowerCase() && tag !== 'p') {
+            execCommand('formatBlock', 'p');
+        } else {
+            execCommand('formatBlock', tag);
+        }
+    }, [execCommand]);
+
     const handleInput = useCallback(() => {
         if (editorRef.current) {
             isInternalChange.current = true;
@@ -76,10 +91,10 @@ const RichTextEditor = ({ value, onChange, placeholder = 'Start typing...', rows
 
                 <div className="w-px h-5 bg-gray-300 mx-1" />
 
-                <ToolbarButton onClick={() => execCommand('formatBlock', 'h3')} title="Heading">
-                    <span className="text-xs font-extrabold">H</span>
+                <ToolbarButton onClick={() => handleFormatBlock('h3')} title="Heading 1">
+                    <span className="text-xs font-extrabold">H1</span>
                 </ToolbarButton>
-                <ToolbarButton onClick={() => execCommand('formatBlock', 'h4')} title="Subheading">
+                <ToolbarButton onClick={() => handleFormatBlock('h4')} title="Heading 2">
                     <span className="text-[10px] font-extrabold">H2</span>
                 </ToolbarButton>
 
@@ -94,8 +109,8 @@ const RichTextEditor = ({ value, onChange, placeholder = 'Start typing...', rows
 
                 <div className="w-px h-5 bg-gray-300 mx-1" />
 
-                <ToolbarButton onClick={() => execCommand('formatBlock', 'p')} title="Normal Text">
-                    <span className="text-xs font-medium">¶</span>
+                <ToolbarButton onClick={() => handleFormatBlock('p')} title="Paragraph (Normal Text)">
+                    <span className="text-xs font-extrabold">P</span>
                 </ToolbarButton>
             </div>
 

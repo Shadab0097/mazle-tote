@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProducts as fetchAllProducts } from '@/store/productSlice';
 import api from '@/services/api';
+import Image from 'next/image';
 import { FiPlus, FiEdit2, FiTrash2, FiX, FiSearch, FiImage, FiPackage, FiFilter, FiMoreHorizontal, FiUploadCloud } from 'react-icons/fi';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -83,16 +84,19 @@ const AdminProducts = () => {
         const uploadedUrls = [...formData.images];
 
         try {
+            const formDataUpload = new FormData();
+            // Append all new files under the 'images' key for the backend array upload
             for (const file of imageFiles) {
-                const formDataUpload = new FormData();
-                formDataUpload.append('image', file);
-
-                const { data } = await api.post('/api/upload', formDataUpload, {
-                    headers: { 'Content-Type': 'multipart/form-data' }
-                });
-                uploadedUrls.push(data.url);
+                formDataUpload.append('images', file);
             }
-            return uploadedUrls;
+
+            const { data } = await api.post('/api/upload/multiple', formDataUpload, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+
+            // The backend returns an array of objects: [{url, public_id}]
+            const newUrls = data.map(img => img.url);
+            return [...uploadedUrls, ...newUrls];
         } catch (error) {
             throw new Error('Failed to upload images');
         } finally {
@@ -250,7 +254,7 @@ const AdminProducts = () => {
                                             <div className="flex items-center gap-5">
                                                 <div className="w-16 h-16 bg-gray-100 rounded-xl overflow-hidden flex-shrink-0 border border-gray-200 relative group-hover:scale-105 transition-transform duration-300">
                                                     {product.images?.[0] ? (
-                                                        <img src={product.images[0]} alt="" className="w-full h-full object-cover" />
+                                                        <Image src={product.images[0]} alt="" fill sizes="64px" className="object-cover" />
                                                     ) : (
                                                         <div className="flex items-center justify-center h-full text-gray-400"><FiImage /></div>
                                                     )}
@@ -366,7 +370,7 @@ const AdminProducts = () => {
                                         <div className="grid grid-cols-3 sm:grid-cols-5 gap-3 mb-4">
                                             {imagePreviews.map((img, index) => (
                                                 <div key={index} className="relative group aspect-square rounded-xl overflow-hidden border border-gray-200 bg-gray-50">
-                                                    <img src={img.url} alt="" className="w-full h-full object-cover" />
+                                                    <Image src={img.url} alt="" fill sizes="150px" className="object-cover" />
                                                     <button
                                                         type="button"
                                                         onClick={() => removeImage(index)}

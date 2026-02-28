@@ -1,4 +1,4 @@
-import { Inter } from "next/font/google";
+import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/Providers";
 
@@ -6,6 +6,13 @@ const inter = Inter({
     subsets: ["latin"],
     display: "swap",
     variable: "--font-inter",
+});
+
+const playfair = Playfair_Display({
+    subsets: ["latin"],
+    display: "swap",
+    variable: "--font-heading",
+    weight: ["400", "500", "600", "700", "800", "900"],
 });
 
 export const metadata = {
@@ -48,7 +55,11 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
     return (
-        <html lang="en" className={inter.variable}>
+        <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
+            <head>
+                <link rel="preconnect" href="https://res.cloudinary.com" />
+                <link rel="dns-prefetch" href="https://res.cloudinary.com" />
+            </head>
             <body className="font-sans antialiased">
                 <Providers>
                     {children}
