@@ -29,14 +29,14 @@ const ProductCardComponent = memo(({ product, onAddToCart }) => (
             )}
 
             {/* Animated Hanging Pre-Order Badge */}
-            <div className="absolute -top-1 right-4 z-20 animate-sway origin-top">
+            {/* <div className="absolute -top-1 right-4 z-20 animate-sway origin-top">
                 <div className="bg-[var(--color-primary)] text-white w-16 h-24 shadow-lg flex flex-col items-center justify-center p-2 clip-path-badge before:absolute before:inset-0 before:bg-gradient-to-b before:from-white/20 before:to-transparent">
                     <span className="text-[7px] font-black uppercase tracking-tight mb-1 leading-tight text-center opacity-90 border-b border-white/20 pb-1 mb-1 w-full">Coming<br />Soon</span>
                     <span className="text-[10px] font-bold uppercase tracking-widest mb-0 opacity-80">Pre</span>
                     <span className="text-xs font-extrabold uppercase tracking-wider relative z-10">Order</span>
                     <div className="w-1.5 h-1.5 bg-white/50 rounded-full mt-1.5 shadow-inner"></div>
                 </div>
-            </div>
+            </div> */}
 
             {/* Tag - Logic could be expanded */}
             {product.isHottest && (

@@ -5,11 +5,12 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginAdmin, clearError } from '@/store/authSlice';
-import { FiMail, FiLock, FiArrowRight, FiShield, FiCheckCircle } from 'react-icons/fi';
+import { FiMail, FiLock, FiArrowRight, FiShield, FiCheckCircle, FiEye, FiEyeOff } from 'react-icons/fi';
 import { useToast } from '@/context/ToastContext';
 
 const AdminLogin = () => {
     const [formData, setFormData] = useState({ email: '', password: '' });
+    const [showPassword, setShowPassword] = useState(false);
     const dispatch = useDispatch();
     const router = useRouter();
     const { loading, error, isAdmin } = useSelector((state) => state.auth);
@@ -92,14 +93,21 @@ const AdminLogin = () => {
                                 <FiLock size={18} />
                             </div>
                             <input
-                                type="password"
+                                type={showPassword ? 'text' : 'password'}
                                 name="password"
                                 placeholder="••••••••"
                                 value={formData.password}
                                 onChange={handleChange}
-                                className="w-full pl-12 pr-4 py-3.5 bg-white/80 border-2 border-gray-100 focus:border-[#8ABEE8] rounded-xl outline-none text-[#2C2C2C] font-medium placeholder-gray-400 text-sm transition-all duration-300 shadow-sm focus:shadow-md focus:bg-white"
+                                className="w-full pl-12 pr-12 py-3.5 bg-white/80 border-2 border-gray-100 focus:border-[#8ABEE8] rounded-xl outline-none text-[#2C2C2C] font-medium placeholder-gray-400 text-sm transition-all duration-300 shadow-sm focus:shadow-md focus:bg-white"
                                 required
                             />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-[#8ABEE8] transition-colors"
+                            >
+                                {showPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
+                            </button>
                         </div>
                     </div>
 
@@ -126,8 +134,8 @@ const AdminLogin = () => {
                 <p className="text-center text-gray-300 text-[10px] mt-6 tracking-widest uppercase">
                     &copy; 2026 Mazel Tote System
                 </p>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 };
 
