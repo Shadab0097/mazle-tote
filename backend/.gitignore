@@ -9,6 +9,8 @@ src/config/adminSeed.js
 .env.production.local
 readme.txt
 scripts/fix_slugs.js
+scripts/seed_charities.js
+
 
 # Logs
 npm-debug.log*

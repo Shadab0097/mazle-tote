@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { FiArrowRight, FiShoppingBag, FiGlobe, FiSun, FiShield, FiHeart, FiBook } from 'react-icons/fi';
 import { FaHeart } from 'react-icons/fa';
 import HomeClient from './HomeClient';
+import AnimatedCounter from '@/components/AnimatedCounter';
 
 export const metadata = {
     title: 'Mazel Tote — Carry Hope, Create Impact | Premium Tote Bags for Charity',
@@ -13,7 +14,8 @@ export const metadata = {
 };
 
 // --- Hero Component ---
-const Hero = () => {
+const Hero = ({ charities = [] }) => {
+    const totalRaised = charities.reduce((sum, c) => sum + (c.amount || 0), 0);
     return (
         <section className="relative pt-28 pb-16 lg:pt-48 lg:pb-32 overflow-hidden bg-[var(--color-bg-secondary)]">
             {/* Abstract Background Shapes */}
@@ -61,27 +63,48 @@ const Hero = () => {
                             </Link>
                         </div>
 
-                        {/* Impact Indicators - Styled like original avatars but for charity */}
-                        <div className="flex items-center justify-center lg:justify-start gap-6 pt-6 opacity-90">
-                            <div className="flex -space-x-4">
-                                <div className="w-12 h-12 rounded-full border-2 border-white bg-blue-100 flex items-center justify-center text-blue-600 shadow-sm z-30">
-                                    <FiShield size={20} />
+                        {/* Impact Indicators & Live Tracker */}
+                        <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 sm:gap-6 pt-8">
+                            <div className="flex items-center gap-4 bg-white/50 border border-gray-100 py-2 px-4 rounded-full shadow-sm backdrop-blur-sm">
+                                <div className="flex -space-x-4">
+                                    <div className="w-10 h-10 rounded-full border-2 border-white bg-blue-100 flex items-center justify-center text-blue-600 shadow-sm z-30 transform transition-transform hover:-translate-y-1">
+                                        <FiShield size={16} />
+                                    </div>
+                                    <div className="w-10 h-10 rounded-full border-2 border-white bg-emerald-100 flex items-center justify-center text-emerald-600 shadow-sm z-20 transform transition-transform hover:-translate-y-1">
+                                        <FiGlobe size={16} />
+                                    </div>
+                                    <div className="w-10 h-10 rounded-full border-2 border-white bg-rose-100 flex items-center justify-center text-rose-600 shadow-sm z-10 transform transition-transform hover:-translate-y-1">
+                                        <FiHeart size={16} />
+                                    </div>
                                 </div>
-                                <div className="w-12 h-12 rounded-full border-2 border-white bg-emerald-100 flex items-center justify-center text-emerald-600 shadow-sm z-20">
-                                    <FiGlobe size={20} />
-                                </div>
-                                <div className="w-12 h-12 rounded-full border-2 border-white bg-rose-100 flex items-center justify-center text-rose-600 shadow-sm z-10">
-                                    <FiHeart size={20} />
+                                <div className="text-left">
+                                    <div className="text-sm font-bold text-[var(--color-text)]">
+                                        Verified Impact
+                                    </div>
+                                    <div className="text-xs text-gray-500">
+                                        3+ Partners
+                                    </div>
                                 </div>
                             </div>
-                            <div className="text-left">
-                                <div className="text-sm font-bold text-[var(--color-text)]">
-                                    Verified Impact
+
+                            {/* Small Live Tracker beside it */}
+                            {totalRaised > 0 && (
+                                <div className="flex items-center gap-3 bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-100 py-2.5 px-6 rounded-full shadow-[0_4px_14px_0_rgba(16,185,129,0.15)] hover:shadow-[0_6px_20px_rgba(16,185,129,0.23)] transition-all duration-300 relative overflow-hidden group w-fit">
+                                    <div className="absolute inset-0 bg-white/40 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out"></div>
+                                    <div className="relative flex items-center justify-center ml-1">
+                                        <span className="absolute w-3 h-3 rounded-full bg-emerald-400/60 animate-soft-pulse"></span>
+                                        <span className="relative w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span>
+                                    </div>
+                                    <div className="text-left relative z-10">
+                                        <div className="flex items-baseline gap-1.5">
+                                            <p className="text-[11px] font-bold text-gray-500 uppercase tracking-widest leading-none mb-1">Total Raised</p>
+                                        </div>
+                                        <p className="text-xl font-black text-green-600 leading-none tracking-tight">
+                                            <AnimatedCounter value={totalRaised} prefix="$" decimals={2} duration={2500} />
+                                        </p>
+                                    </div>
                                 </div>
-                                <div className="text-xs text-gray-500">
-                                    3+ Partner Charities
-                                </div>
-                            </div>
+                            )}
                         </div>
                     </div>
 
@@ -270,33 +293,16 @@ const MissionVision = () => {
 };
 
 // --- Charity Partners Component ---
-const CharityPartners = () => {
-    const charities = [
-        {
-            name: "StandWithUs",
-            desc: "An international non-profit organization that prioritizes education about Israel and fights antisemitism around the world.",
-            link: "https://www.standwithus.org",
-            iconName: "globe"
-        },
-        {
-            name: "Combat Campus Antisemitism",
-            desc: "Dedicated to ending hate and harassment against Jewish students on college campuses through rapid response and education.",
-            link: "https://www.combatcampusantisemitism.org/",
-            iconName: "book"
-        },
-        {
-            name: "Blue Square Alliance",
-            desc: "Standing up against Jewish hate and promoting pride through the Blue Square campaign.",
-            link: "https://www.bluesquarealliance.org/",
-            iconName: "heart"
-        }
-    ];
-
+const CharityPartners = ({ charities = [] }) => {
     const iconMap = {
         globe: <FiGlobe size={28} />,
         book: <FiBook size={28} />,
         heart: <FiHeart size={28} />,
+        shield: <FiShield size={28} />,
+        sun: <FiSun size={28} />,
     };
+
+    const totalRaised = charities.reduce((sum, c) => sum + (c.amount || 0), 0);
 
     return (
         <section className="py-24 bg-white relative overflow-hidden">
@@ -308,21 +314,48 @@ const CharityPartners = () => {
                     <h2 className="text-3xl md:text-5xl font-extrabold text-[var(--color-text)] mb-4">
                         Your Purchase <span className="text-[var(--color-primary)]">Matters.</span>
                     </h2>
-                    <p className="text-gray-600 text-lg">
+                    <p className="text-gray-600 text-lg mb-6">
                         100% of the proceeds from your purchase go directly to the charity of your choice. You choose where your impact goes at checkout.
                     </p>
+                    {totalRaised > 0 && (
+                        <div className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-100 rounded-2xl px-8 py-4 shadow-sm">
+                            <FiHeart className="text-rose-500" size={22} />
+                            <div className="text-left">
+                                <div className="flex items-center justify-between gap-3">
+                                    <div className="flex items-center gap-2">
+                                        <p className="text-l font-bold text-gray-400 uppercase tracking-wider">Total Raised</p>
+                                        {/* <span className="relative flex h-3 w-3 flex-shrink-0">
+                                            <span className="animate-soft-pulse absolute inline-flex h-full w-full rounded-full bg-emerald-400/60"></span>
+                                            <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                                        </span> */}
+                                    </div>
+                                </div>
+                                <p className="text-3xl font-extrabold text-emerald-600">
+                                    <AnimatedCounter value={totalRaised} prefix="$" decimals={2} duration={2500} />
+                                </p>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 <div className="grid md:grid-cols-3 gap-8">
                     {charities.map((charity, idx) => (
-                        <a key={idx} href={charity.link} target="_blank" rel="noopener noreferrer" className="bg-[var(--color-bg-secondary)] p-8 rounded-[2rem] hover:shadow-xl transition-all duration-300 border border-transparent hover:border-[var(--color-primary)]/20 group cursor-pointer block">
+                        <a key={charity._id || idx} href={charity.link || '#'} target={charity.link ? '_blank' : '_self'} rel="noopener noreferrer" className="bg-[var(--color-bg-secondary)] p-8 rounded-[2rem] hover:shadow-xl transition-all duration-300 border border-transparent hover:border-[var(--color-primary)]/20 group cursor-pointer block">
                             <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-[var(--color-primary)] mb-6 shadow-sm group-hover:scale-110 transition-transform">
-                                {iconMap[charity.iconName]}
+                                {iconMap[charity.iconName] || iconMap.heart}
                             </div>
-                            <h3 className="text-xl font-bold text-[var(--color-text)] mb-3 group-hover:text-[var(--color-primary)] transition-colors">{charity.name}</h3>
-                            <p className="text-gray-600 text-sm leading-relaxed mb-6">
-                                {charity.desc}
-                            </p>
+                            <h3 className="text-xl font-bold text-[var(--color-text)] mb-2 group-hover:text-[var(--color-primary)] transition-colors">{charity.name}</h3>
+                            {charity.amount > 0 && (
+                                <p className="text-2xl font-extrabold text-emerald-600 mb-3">
+                                    <AnimatedCounter value={charity.amount} prefix="$" decimals={2} duration={2000} />
+                                    <span className="text-xs font-bold text-gray-400 ml-2 uppercase">Raised</span>
+                                </p>
+                            )}
+                            {charity.description && (
+                                <p className="text-gray-600 text-sm leading-relaxed mb-6">
+                                    {charity.description}
+                                </p>
+                            )}
                             <div className="flex items-center gap-2 text-[var(--color-primary)] font-bold text-xs uppercase tracking-wide opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0 duration-300">
                                 Learn More <FiArrowRight />
                             </div>
@@ -356,7 +389,20 @@ async function getProducts() {
     try {
         const apiUrl = process.env.BACKEND_URL || 'http://localhost:5000';
         const res = await fetch(`${apiUrl}/api/products`, {
-            next: { revalidate: 60 }, // Revalidate every 60 seconds
+            next: { revalidate: 60 },
+        });
+        if (!res.ok) return [];
+        return await res.json();
+    } catch {
+        return [];
+    }
+}
+
+async function getCharities() {
+    try {
+        const apiUrl = process.env.BACKEND_URL || 'http://localhost:5000';
+        const res = await fetch(`${apiUrl}/api/charities`, {
+            next: { revalidate: 60 },
         });
         if (!res.ok) return [];
         return await res.json();
@@ -366,15 +412,14 @@ async function getProducts() {
 }
 
 export default async function Home() {
-    const products = await getProducts();
+    const [products, charities] = await Promise.all([getProducts(), getCharities()]);
 
     return (
         <div className="flex flex-col min-h-screen bg-white">
-            <Hero />
+            <Hero charities={charities} />
             <Marquee />
-            {/* Featured Collection - Client Island for interactivity */}
             <HomeClient products={products} />
-            <CharityPartners />
+            <CharityPartners charities={charities} />
             <MeetFounder />
             <MissionVision />
         </div>

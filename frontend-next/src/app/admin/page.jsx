@@ -17,7 +17,13 @@ import {
     FiMail,
     FiSend,
     FiPrinter,
-    FiRefreshCw
+    FiRefreshCw,
+    FiHeart,
+    FiPlus,
+    FiEdit2,
+    FiTrash2,
+    FiCheck,
+    FiX
 } from 'react-icons/fi';
 
 import { useToast } from '@/context/ToastContext';
@@ -103,6 +109,7 @@ const NewsletterModal = ({ isOpen, onClose }) => {
 const AdminDashboard = () => {
     const router = useRouter();
     const dispatch = useDispatch();
+    const toast = useToast();
     const { stats: adminStats, loading: adminLoading, statsLastFetched, recentOrders: adminRecentOrders } = useSelector((state) => state.admin);
 
     // Local state (initialized with Redux data if available)
@@ -131,6 +138,14 @@ const AdminDashboard = () => {
     const [labelOrder, setLabelOrder] = useState(null);
     const [showLabelModal, setShowLabelModal] = useState(false);
 
+    // Charity Tracker State
+    const [charities, setCharities] = useState([]);
+    const [charitiesLoading, setCharitiesLoading] = useState(true);
+    const [editingCharity, setEditingCharity] = useState(null);
+    const [editForm, setEditForm] = useState({ name: '', amount: '', description: '', link: '', iconName: 'heart' });
+    const [showAddCharity, setShowAddCharity] = useState(false);
+    const [newCharity, setNewCharity] = useState({ name: '', amount: '', description: '', link: '', iconName: 'heart' });
+
     // 1. Fetch Data Effect (Caching Strategy)
     useEffect(() => {
         // Fetch only if not present or stale (> 5 mins)
@@ -142,6 +157,18 @@ const AdminDashboard = () => {
             setLoading(false);
         }
     }, [dispatch, adminStats, statsLastFetched]);
+
+    // Fetch Charities
+    useEffect(() => {
+        const fetchCharities = async () => {
+            try {
+                const { data } = await api.get('/api/charities');
+                setCharities(data);
+            } catch { /* silent */ }
+            finally { setCharitiesLoading(false); }
+        };
+        fetchCharities();
+    }, []);
 
     // 2. Sync Effect (Redux -> Local State)
     useEffect(() => {
@@ -178,6 +205,51 @@ const AdminDashboard = () => {
         e.stopPropagation();
         setLabelOrder(order);
         setShowLabelModal(true);
+    };
+
+    // Charity handlers
+    const handleSaveCharity = async (id) => {
+        try {
+            const { data } = await api.put(`/api/charities/${id}`, {
+                name: editForm.name,
+                amount: parseFloat(editForm.amount) || 0,
+                description: editForm.description,
+                link: editForm.link,
+                iconName: editForm.iconName,
+            });
+            setCharities(prev => prev.map(c => c._id === id ? data : c));
+            setEditingCharity(null);
+            toast.success('Charity updated!');
+        } catch (err) {
+            toast.error(err.response?.data?.message || 'Failed to update charity');
+        }
+    };
+
+    const handleAddCharity = async () => {
+        if (!newCharity.name) return;
+        try {
+            const { data } = await api.post('/api/charities', {
+                ...newCharity,
+                amount: parseFloat(newCharity.amount) || 0,
+            });
+            setCharities(prev => [...prev, data]);
+            setNewCharity({ name: '', amount: '', description: '', link: '', iconName: 'heart' });
+            setShowAddCharity(false);
+            toast.success('Charity added!');
+        } catch (err) {
+            toast.error(err.response?.data?.message || 'Failed to add charity');
+        }
+    };
+
+    const handleDeleteCharity = async (id) => {
+        if (!window.confirm('Delete this charity?')) return;
+        try {
+            await api.delete(`/api/charities/${id}`);
+            setCharities(prev => prev.filter(c => c._id !== id));
+            toast.success('Charity deleted');
+        } catch (err) {
+            toast.error(err.response?.data?.message || 'Failed to delete charity');
+        }
     };
 
     const statCards = [
@@ -292,6 +364,129 @@ const AdminDashboard = () => {
                         <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">{stat.label}</p>
                     </div>
                 ))}
+            </div>
+
+            {/* Charity Tracker Section */}
+            <div className="bg-white rounded-[2.5rem] p-6 md:p-8 shadow-sm border border-gray-100">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                    <div>
+                        <h3 className="text-xl font-bold text-[#2C2C2C] flex items-center gap-2">
+                            <FiHeart className="text-rose-500" /> Charity Tracker
+                        </h3>
+                        <p className="text-sm text-gray-400 mt-1">Track amounts raised for each charity partner.</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <div className="px-4 py-2 rounded-xl bg-emerald-50 text-emerald-600 font-bold text-sm">
+                            Total: ${charities.reduce((sum, c) => sum + (c.amount || 0), 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                        </div>
+                        <button
+                            onClick={() => setShowAddCharity(true)}
+                            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#8ABEE8] text-white font-bold text-sm hover:bg-[#2C2C2C] transition-colors"
+                        >
+                            <FiPlus size={16} /> Add Charity
+                        </button>
+                    </div>
+                </div>
+
+                {/* Add New Charity Form */}
+                {showAddCharity && (
+                    <div className="bg-[#F5F8FA] rounded-2xl p-5 mb-6 space-y-3 animate-in fade-in duration-300">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <Input placeholder="Charity Name *" value={newCharity.name} onChange={(e) => setNewCharity(p => ({ ...p, name: e.target.value }))} />
+                            <Input type="number" step="0.01" placeholder="Amount Raised ($)" value={newCharity.amount} onChange={(e) => setNewCharity(p => ({ ...p, amount: e.target.value }))} />
+                        </div>
+                        <Input placeholder="Description (optional)" value={newCharity.description} onChange={(e) => setNewCharity(p => ({ ...p, description: e.target.value }))} />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <Input placeholder="Website URL (optional)" value={newCharity.link} onChange={(e) => setNewCharity(p => ({ ...p, link: e.target.value }))} />
+                            <select value={newCharity.iconName} onChange={(e) => setNewCharity(p => ({ ...p, iconName: e.target.value }))} className="px-4 py-3 bg-white border-2 border-gray-100 rounded-xl text-sm font-medium outline-none focus:border-[#8ABEE8]">
+                                <option value="heart">❤️ Heart</option>
+                                <option value="globe">🌍 Globe</option>
+                                <option value="book">📖 Book</option>
+                                <option value="shield">🛡️ Shield</option>
+                            </select>
+                        </div>
+                        <div className="flex justify-end gap-2 pt-1">
+                            <Button variant="ghost" onClick={() => setShowAddCharity(false)}>Cancel</Button>
+                            <Button onClick={handleAddCharity}>Save Charity</Button>
+                        </div>
+                    </div>
+                )}
+
+                {/* Charities List */}
+                {charitiesLoading ? (
+                    <div className="flex justify-center py-8">
+                        <div className="w-8 h-8 border-4 border-[#8ABEE8] border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                ) : charities.length === 0 ? (
+                    <div className="text-center py-12 text-gray-400">
+                        <FiHeart size={32} className="mx-auto mb-3 text-gray-300" />
+                        <p className="font-medium">No charities added yet.</p>
+                        <p className="text-sm">Click "Add Charity" to get started.</p>
+                    </div>
+                ) : (
+                    <div className="space-y-3">
+                        {charities.map((charity) => (
+                            <div key={charity._id} className="p-4 rounded-2xl bg-[#F5F8FA] hover:bg-gray-50 transition-colors group">
+                                {editingCharity === charity._id ? (
+                                    /* Edit Mode */
+                                    <div className="space-y-3">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                            <Input value={editForm.name} onChange={(e) => setEditForm(p => ({ ...p, name: e.target.value }))} placeholder="Name" />
+                                            <Input type="number" step="0.01" value={editForm.amount} onChange={(e) => setEditForm(p => ({ ...p, amount: e.target.value }))} placeholder="Amount" />
+                                        </div>
+                                        <textarea
+                                            value={editForm.description}
+                                            onChange={(e) => setEditForm(p => ({ ...p, description: e.target.value }))}
+                                            placeholder="Description"
+                                            className="w-full px-4 py-3 bg-white border-2 border-gray-100 focus:border-[#8ABEE8] rounded-xl outline-none text-sm font-medium resize-y min-h-[80px]"
+                                            rows={3}
+                                        />
+                                        <div className="flex gap-2">
+                                            <button onClick={() => handleSaveCharity(charity._id)} className="p-2 rounded-lg bg-emerald-500 text-white hover:bg-emerald-600 transition-colors">
+                                                <FiCheck size={16} />
+                                            </button>
+                                            <button onClick={() => setEditingCharity(null)} className="p-2 rounded-lg bg-gray-200 text-gray-600 hover:bg-gray-300 transition-colors">
+                                                <FiX size={16} />
+                                            </button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    /* View Mode */
+                                    <div className="flex flex-col md:flex-row gap-3">
+                                        <div className="flex items-start gap-4 flex-1 min-w-0 overflow-hidden">
+                                            <div className="w-10 h-10 rounded-xl bg-rose-50 text-rose-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                                <FiHeart size={18} />
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <h4 className="font-bold text-[#2C2C2C]">{charity.name}</h4>
+                                                {charity.description && (
+                                                    <p className="text-xs text-gray-400 mt-1 line-clamp-2" title={charity.description}>{charity.description}</p>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-3 flex-shrink-0 md:pl-4">
+                                            <span className="text-xl font-extrabold text-emerald-600 whitespace-nowrap">
+                                                ${charity.amount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                                            </span>
+                                            <button
+                                                onClick={() => {
+                                                    setEditingCharity(charity._id);
+                                                    setEditForm({ name: charity.name, amount: charity.amount, description: charity.description || '', link: charity.link || '', iconName: charity.iconName || 'heart' });
+                                                }}
+                                                className="p-2 rounded-lg text-gray-400 hover:text-[#8ABEE8] hover:bg-white transition-colors"
+                                            >
+                                                <FiEdit2 size={16} />
+                                            </button>
+                                            <button onClick={() => handleDeleteCharity(charity._id)} className="p-2 rounded-lg text-gray-400 hover:text-red-500 hover:bg-white transition-colors">
+                                                <FiTrash2 size={16} />
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                )}
             </div>
 
             {/* Recent Orders Table - Full Width */}
