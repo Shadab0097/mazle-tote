@@ -19,7 +19,7 @@ const About = () => {
                         {/* Left Side: Frame & Banner Container */}
                         <div className="w-full lg:w-1/2 flex flex-col gap-6 lg:gap-10 mb-16 lg:mb-0 flex-shrink-0 ml-0 lg:ml-10 mt-8 md:mt-16 lg:mt-28">
                             {/* Elegant Collage Frame Composition */}
-                            <div className="relative w-full h-[450px] sm:h-[550px] lg:h-[650px] -mt-16">
+                            <div className="relative w-full h-[450px] sm:h-[550px] lg:h-[650px] sm:-mt-16 mt-0">
                                 {/* Decorative background blobs */}
                                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-gradient-to-tr from-[var(--color-primary)]/20 to-blue-200/20 rounded-full blur-[60px] lg:blur-[80px] -z-20 animate-pulse"></div>
 
