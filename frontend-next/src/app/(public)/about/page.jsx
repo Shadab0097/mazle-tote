@@ -9,49 +9,76 @@ const About = () => {
             {/* Our Story Section */}
             <section id="our-story" className="pt-32 pb-24 lg:pt-48 lg:pb-32 bg-white relative overflow-hidden">
                 {/* Decorative Text Watermark */}
-                <div className="absolute top-20 left-0 text-[180px] lg:text-[250px] font-bold text-gray-50 opacity-100 leading-none pointer-events-none select-none hidden lg:block tracking-tighter">
+                <div className="absolute top-24 lg:top-20 left-0 text-[100px] sm:text-[140px] md:text-[180px] lg:text-[250px] font-bold text-gray-50 opacity-100 leading-none pointer-events-none select-none tracking-tighter w-full overflow-hidden whitespace-nowrap">
                     MAZEL
                 </div>
 
-                <Container className="relative z-10">
-                    <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
+                <Container className="relative z-10 ">
+                    <div className="flex flex-col lg:flex-row items-center lg:items-start gap-16 lg:gap-24 ">
 
-                        {/* Left: Artistic Image Composition */}
-                        <div className="lg:w-1/2 relative mb-16 lg:mb-0">
-                            {/* Main Tall Image */}
-                            <div className="relative z-10 rounded-[2.5rem] overflow-hidden shadow-2xl w-full max-w-md mx-auto lg:mx-0 border-8 border-white">
-                                <Image
-                                    src="/Tu-Bav-Tote.png"
-                                    alt="Artisan working on bag"
-                                    width={800}
-                                    height={1000}
-                                    sizes="(max-width: 1024px) 100vw, 50vw"
-                                    className="w-full h-[500px] lg:h-[650px] object-cover hover:scale-105 transition-transform duration-700"
-                                    priority
-                                />
-                                {/* Overlay Content */}
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex flex-col justify-end p-8 text-white">
-                                    <div className="w-2/3 md:w-3/4 sm:-mb-0 -mb-8">
-                                        <span className="font-bold text-[var(--color-primary)] uppercase tracking-widest text-xs mb-2 block">Established 2026</span>
-                                        <p className="font-light italic text-lg opacity-90 leading-relaxed">"Exclusively designed by a 12-year-old girl located in Boca Raton, FL."</p>
+                        {/* Left Side: Frame & Banner Container */}
+                        <div className="w-full lg:w-1/2 flex flex-col gap-6 lg:gap-10 mb-16 lg:mb-0 flex-shrink-0 ml-0 lg:ml-10 mt-8 md:mt-16 lg:mt-28">
+                            {/* Elegant Collage Frame Composition */}
+                            <div className="relative w-full h-[450px] sm:h-[550px] lg:h-[650px]">
+                                {/* Decorative background blobs */}
+                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-gradient-to-tr from-[var(--color-primary)]/20 to-blue-200/20 rounded-full blur-[60px] lg:blur-[80px] -z-20 animate-pulse"></div>
+
+                                {/* 1. Main Tote Image - Center/Right */}
+                                <div tabIndex="0" className="absolute top-[5%] right-[5%] lg:right-[10%] w-[65%] lg:w-[60%] h-[75%] lg:h-[80%] rounded-[2rem] lg:rounded-[3rem] overflow-hidden shadow-[0_20px_50px_-12px_rgba(0,0,0,0.2)] border-8 border-white z-10 transition-all duration-700 hover:scale-[1.03] focus:scale-[1.03] active:scale-[1.03] hover:shadow-[0_40px_70px_-15px_rgba(0,0,0,0.3)] focus:shadow-[0_40px_70px_-15px_rgba(0,0,0,0.3)] active:shadow-[0_40px_70px_-15px_rgba(0,0,0,0.3)] hover:z-40 focus:z-40 active:z-40 outline-none cursor-pointer">
+                                    <Image
+                                        src="/Tu-Bav-Tote.png"
+                                        alt="Mazel Tote carrying hope"
+                                        fill
+                                        sizes="(max-width: 1024px) 65vw, 30vw"
+                                        className="object-cover"
+                                        priority
+                                    />
+                                </div>
+
+                                {/* 2. Founder Portrait - Top Left */}
+                                <div tabIndex="0" className="absolute top-[10%] left-[5%] lg:-left-[5%] w-[45%] lg:w-[45%] h-[40%] lg:h-[45%] rounded-[1.5rem] lg:rounded-[2rem] overflow-hidden shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] border-[6px] lg:border-8 border-white z-20 transition-all duration-700 hover:-translate-y-3 focus:-translate-y-3 active:-translate-y-3 hover:rotate-0 focus:rotate-0 active:rotate-0 -rotate-6 hover:shadow-[0_40px_70px_-15px_rgba(0,0,0,0.3)] focus:shadow-[0_40px_70px_-15px_rgba(0,0,0,0.3)] active:shadow-[0_40px_70px_-15px_rgba(0,0,0,0.3)] hover:z-40 focus:z-40 active:z-40 outline-none cursor-pointer group">
+                                    <Image
+                                        src="/founder-story.png"
+                                        alt="Brielle - Founder of Mazel Tote"
+                                        fill
+                                        sizes="(max-width: 1024px) 45vw, 25vw"
+                                        className="object-cover group-hover:scale-110 group-focus:scale-110 group-active:scale-110 transition-transform duration-1000"
+                                    />
+                                    <div className="absolute top-3 left-3 lg:top-4 lg:left-4 bg-white/95 backdrop-blur-md px-3.5 py-1.5 rounded-full shadow-sm border border-black/5">
+                                        <span className="text-[9px] lg:text-[10px] font-extrabold text-[var(--color-text)] tracking-wider uppercase">The Founder</span>
+                                    </div>
+                                </div>
+
+                                {/* 3. Booth Image - Bottom Center/Left */}
+                                <div tabIndex="0" className="absolute bottom-[0%] lg:bottom-[5%] left-[10%] lg:left-[5%] w-[55%] lg:w-[50%] h-[35%] lg:h-[40%] rounded-[1.5rem] lg:rounded-[2rem] overflow-hidden shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)] border-[6px] lg:border-8 border-white z-30 transition-all duration-700 hover:-translate-y-3 focus:-translate-y-3 active:-translate-y-3 hover:rotate-0 focus:rotate-0 active:rotate-0 rotate-3 hover:shadow-[0_40px_80px_-15px_rgba(0,0,0,0.4)] focus:shadow-[0_40px_80px_-15px_rgba(0,0,0,0.4)] active:shadow-[0_40px_80px_-15px_rgba(0,0,0,0.4)] hover:z-40 focus:z-40 active:z-40 outline-none cursor-pointer group">
+                                    <Image
+                                        src="/brielle.jpeg"
+                                        alt="Brielle at the Mazel Tote booth"
+                                        fill
+                                        sizes="(max-width: 1024px) 55vw, 25vw"
+                                        className="object-cover group-hover:scale-110 group-focus:scale-110 group-active:scale-110 transition-transform duration-1000"
+                                    />
+                                    <div className="absolute bottom-3 right-3 lg:bottom-4 lg:right-4 bg-white/95 backdrop-blur-md px-3.5 py-1.5 rounded-full shadow-sm border border-black/5 flex items-center gap-1.5">
+                                        <span className="text-[9px] lg:text-[10px] font-extrabold text-[var(--color-text)] tracking-wider uppercase">Spreading Kindness</span>
+                                        <span className="text-blue-500 text-[10px] lg:text-[12px]">💙</span>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Floating Offset Image - overlay hanging on mobile with space reserved below */}
-                            <div className="absolute sm:-bottom-24  -bottom-8 -right-2 lg:-bottom-24 lg:-right-12 w-32 h-32 lg:w-72 lg:h-72 rounded-[1.5rem] lg:rounded-[2.5rem] overflow-hidden shadow-2xl border-4 lg:border-8 border-white z-20 hover:-translate-y-2 transition-transform duration-500">
-                                <Image
-                                    src="/founder-story.png"
-                                    alt="Founder designing"
-                                    fill
-                                    sizes="288px"
-                                    className="object-cover"
-                                />
-                            </div>
+                            {/* Animated Typographic Quote (Transparent Background) */}
+                            <div className="relative mt-2 lg:mt-4 px-4 lg:px-8 flex flex-col items-start justify-center text-left group z-50">
+                                {/* Subtle animated dot/line accent */}
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className="w-2 h-2 rounded-full bg-[var(--color-primary)] animate-ping opacity-75"></div>
+                                    <span className="text-[var(--color-primary)] text-[10px] lg:text-xs font-bold uppercase tracking-[0.3em] font-sans">Established 2026</span>
+                                    <div className="h-[1px] w-12 bg-gradient-to-r from-[var(--color-primary)] to-transparent"></div>
+                                </div>
 
-                            {/* Decorative Circle */}
-                            <div className="absolute -top-10 -left-10 w-40 h-40 border-2 border-[var(--color-primary)]/30 rounded-full z-0 animate-spin-slow"></div>
-                            <div className="absolute bottom-20 -left-20 w-64 h-64 bg-[var(--color-primary)]/5 rounded-full blur-3xl -z-10"></div>
+                                <p className="text-gray-600 dark:text-gray-500 text-lg lg:text-xl font-light italic leading-relaxed max-w-lg relative">
+                                    <span className="absolute -top-4 -left-3 text-4xl text-[var(--color-primary)] opacity-20 font-serif">"</span>
+                                    Exclusively designed by a <span className="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-primary)] to-blue-500 relative inline-block group-hover:animate-pulse">12-year-old girl</span> located in Boca Raton, FL.
+                                </p>
+                            </div>
                         </div>
 
                         {/* Right: Narrative Content */}
