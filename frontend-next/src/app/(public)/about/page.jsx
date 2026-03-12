@@ -19,7 +19,7 @@ const About = () => {
                         {/* Left Side: Frame & Banner Container */}
                         <div className="w-full lg:w-1/2 flex flex-col gap-6 lg:gap-10 mb-16 lg:mb-0 flex-shrink-0 ml-0 lg:ml-10 mt-8 md:mt-16 lg:mt-28">
                             {/* Elegant Collage Frame Composition */}
-                            <div className="relative w-full h-[450px] sm:h-[550px] lg:h-[650px]">
+                            <div className="relative w-full h-[450px] sm:h-[550px] lg:h-[650px] -mt-16">
                                 {/* Decorative background blobs */}
                                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-gradient-to-tr from-[var(--color-primary)]/20 to-blue-200/20 rounded-full blur-[60px] lg:blur-[80px] -z-20 animate-pulse"></div>
 
@@ -107,18 +107,26 @@ const About = () => {
                             </div>
 
                             {/* Signature / Stats */}
-                            <div className="pt-10 flex flex-wrap items-center gap-10 lg:gap-14 border-t border-gray-100">
-                                <div className="group">
-                                    <span className="block text-4xl font-bold text-[var(--color-text)] group-hover:text-[var(--color-primary)] transition-colors">100%</span>
-                                    <span className="text-sm text-gray-400 font-bold uppercase tracking-wider">Proceeds Donated</span>
+                            <div className="pt-10 flex flex-wrap justify-center lg:justify-start items-center gap-x-12 gap-y-10 sm:gap-x-16 lg:gap-14 border-t border-gray-100 relative">
+                                <div className="group text-center lg:text-left">
+                                    <span className="block text-4xl lg:text-5xl font-bold text-[var(--color-text)] group-hover:text-[var(--color-primary)] transition-colors">100%</span>
+                                    <span className="text-xs sm:text-sm text-gray-400 font-bold uppercase tracking-wider">Proceeds Donated</span>
                                 </div>
                                 <div className="h-12 w-px bg-gray-200 hidden sm:block"></div>
-                                <div className="group">
-                                    <span className="block text-4xl font-bold text-[var(--color-text)] group-hover:text-[var(--color-primary)] transition-colors">3</span>
-                                    <span className="text-sm text-gray-400 font-bold uppercase tracking-wider">Charity Partners</span>
+                                <div className="group text-center lg:text-left">
+                                    <span className="block text-4xl lg:text-5xl font-bold text-[var(--color-text)] group-hover:text-[var(--color-primary)] transition-colors">3</span>
+                                    <span className="text-xs sm:text-sm text-gray-400 font-bold uppercase tracking-wider">Charity Partners</span>
                                 </div>
-                                <div className="h-12 w-px bg-gray-200 hidden sm:block"></div>
-                                <Link href="/products" className="flex items-center gap-2 text-[var(--color-primary)] font-bold cursor-pointer group hover:text-[var(--color-text)] transition-colors">
+                                <div className="h-12 w-px bg-gray-200 hidden lg:block"></div>
+
+                                {/* Animated Line specifically for mobile below stats */}
+                                <div className="w-full lg:hidden flex justify-center items-center py-2 -mt-4 mb-2">
+                                    <div className="w-48 sm:w-64 h-[2px] bg-gradient-to-r from-transparent via-[var(--color-primary)]/20 to-transparent relative overflow-hidden rounded-full">
+                                        <div className="absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-[var(--color-primary)]/80 to-transparent blur-[1px]"></div>
+                                    </div>
+                                </div>
+
+                                <Link href="/products" className="flex items-center justify-center w-full lg:w-auto mt-2 lg:mt-0 gap-2 text-[var(--color-primary)] font-bold cursor-pointer group hover:text-[var(--color-text)] transition-colors">
                                     <span className="border-b-2 border-[var(--color-primary)]/30 group-hover:border-[var(--color-text)] pb-1 transition-all">Join The Mission</span>
                                     <FiArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
                                 </Link>
