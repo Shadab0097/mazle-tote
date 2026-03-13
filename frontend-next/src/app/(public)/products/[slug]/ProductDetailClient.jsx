@@ -172,10 +172,10 @@ const ProductDetailClient = ({ product }) => {
                                 {product.name}
                             </h1>
 
-                            {/* Pre-Order Banner */}
+                            {/* Available Banner */}
                             <div className="inline-block bg-[var(--color-primary)]/10 border-l-4 border-[var(--color-primary)] px-6 py-3 mb-6">
-                                <p className="text-[var(--color-primary)] font-bold text-xs tracking-[0.2em] uppercase mb-1">Coming Soon</p>
-                                <p className="text-[var(--color-text)] font-extrabold text-xl tracking-wide">PRE-ORDER BAGS NOW</p>
+                                <p className="text-[var(--color-primary)] font-bold text-xs tracking-[0.2em] uppercase mb-1 animate-pulse">Available Now</p>
+                                <p className="text-[var(--color-text)] font-extrabold text-xl tracking-wide animate-pulse">ORDER BAGS NOW</p>
                             </div>
                             <p className="text-2xl md:text-3xl text-gray-500 font-medium">${product.price}</p>
                         </div>
