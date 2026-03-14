@@ -12,7 +12,8 @@ import {
     FiPackage,
     FiLogOut,
     FiMenu,
-    FiX
+    FiX,
+    FiTag
 } from 'react-icons/fi';
 
 const AdminLayout = ({ children }) => {
@@ -33,6 +34,7 @@ const AdminLayout = ({ children }) => {
         { label: 'Dashboard', path: '/admin', icon: FiLayout },
         { label: 'Orders', path: '/admin/orders', icon: FiShoppingBag },
         { label: 'Products', path: '/admin/products', icon: FiPackage },
+        { label: 'Promos', path: '/admin/promos', icon: FiTag },
     ];
 
     return (

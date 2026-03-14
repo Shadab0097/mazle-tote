@@ -25,7 +25,9 @@ import {
     FiMapPin,
     FiBook,
     FiChevronRight,
-    FiShoppingBag
+    FiShoppingBag,
+    FiTag,
+    FiX
 } from 'react-icons/fi';
 
 // Custom Floating Input Component
@@ -85,6 +87,13 @@ const Checkout = () => {
         firstName: '', lastName: '', email: '', phone: '', address: '', city: '', state: '', zip: ''
     });
 
+    // Promo Code State
+    const [promoCodeInput, setPromoCodeInput] = useState('');
+    const [appliedPromo, setAppliedPromo] = useState(null);
+    const [discountAmount, setDiscountAmount] = useState(0);
+    const [promoLoading, setPromoLoading] = useState(false);
+    const [promoError, setPromoError] = useState('');
+
     // ============ SHIPPING CONFIGURATION (from .env) ============
     const SHIPPING_COST = parseFloat(process.env.NEXT_PUBLIC_SHIPPING_COST) || 0;
     // ============================================================
@@ -93,7 +102,7 @@ const Checkout = () => {
     const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
     const shippingCost = SHIPPING_COST;
     const donation = subtotal * 0.10;
-    const total = subtotal + shippingCost;
+    const total = Math.max(0, subtotal + shippingCost - discountAmount);
 
     // Ref to prevent re-triggering the redirect toast
     const hasRedirectedForEmptyCart = useRef(false);
@@ -132,6 +141,30 @@ const Checkout = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
+    const handleApplyPromo = async () => {
+        if (!promoCodeInput.trim()) return;
+        setPromoLoading(true);
+        setPromoError('');
+        try {
+            const { data } = await api.post('/api/promos/validate', { code: promoCodeInput });
+            setAppliedPromo(data.code);
+            setDiscountAmount(data.discountAmount);
+            setPromoCodeInput('');
+            toast.success(data.message);
+        } catch (error) {
+            setPromoError(error.response?.data?.message || 'Invalid promo code');
+            toast.error(error.response?.data?.message || 'Invalid promo code');
+        } finally {
+            setPromoLoading(false);
+        }
+    };
+
+    const handleRemovePromo = () => {
+        setAppliedPromo(null);
+        setDiscountAmount(0);
+        toast.info('Promo code removed');
+    };
+
     // Ref for storing local order ID for PayPal flow
     const localOrderIdRef = useRef(null);
 
@@ -156,6 +189,7 @@ const Checkout = () => {
                 charityTrust: selectedCharity,
                 payment: { method: 'PayPal', status: 'Pending' },
                 totalAmount: total,
+                promoCode: appliedPromo,
             };
 
             // Add guest email if guest checkout
@@ -583,7 +617,47 @@ const Checkout = () => {
                                         </span>
                                         {/* <span className="font-bold">${donation.toFixed(2)}</span> */}
                                     </div>
+
+                                    {appliedPromo && (
+                                        <div className="flex justify-between items-center text-emerald-600 bg-emerald-50 px-4 py-3 rounded-xl mt-2 border border-emerald-100">
+                                            <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wide">
+                                                <FiTag size={14} />
+                                                <span>Promo: {appliedPromo}</span>
+                                                <button onClick={handleRemovePromo} className="ml-2 hover:bg-emerald-100 p-1 rounded-full text-emerald-500 transition-colors">
+                                                    <FiX size={12} />
+                                                </button>
+                                            </div>
+                                            <span className="font-bold">- ${discountAmount.toFixed(2)}</span>
+                                        </div>
+                                    )}
                                 </div>
+
+                                {/* Promo Code Input */}
+                                {!appliedPromo && (
+                                    <div className="mt-6 pt-6 border-t border-gray-100">
+                                        <div className="flex gap-2 relative">
+                                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                                                <FiTag size={16} />
+                                            </div>
+                                            <input
+                                                type="text"
+                                                placeholder="Promo Code"
+                                                value={promoCodeInput}
+                                                onChange={(e) => setPromoCodeInput(e.target.value.toUpperCase())}
+                                                className="flex-1 bg-[#F5F8FA] border-2 border-transparent text-[#2C2C2C] rounded-xl px-4 py-3 pl-10 focus:outline-none focus:border-[#8ABEE8] focus:bg-white transition-colors text-sm font-bold uppercase"
+                                                onKeyDown={(e) => e.key === 'Enter' && handleApplyPromo()}
+                                            />
+                                            <button
+                                                onClick={handleApplyPromo}
+                                                disabled={promoLoading || !promoCodeInput.trim()}
+                                                className="bg-[#2C2C2C] text-white px-6 rounded-xl font-bold hover:bg-[#8ABEE8] transition-colors disabled:opacity-50 text-sm whitespace-nowrap"
+                                            >
+                                                {promoLoading ? '...' : 'Apply'}
+                                            </button>
+                                        </div>
+                                        {promoError && <p className="text-red-500 text-xs mt-2 ml-1 font-medium">{promoError}</p>}
+                                    </div>
+                                )}
 
                                 <div className="pt-6 mt-6 border-t border-gray-100 mb-8">
                                     <div className="flex justify-between items-end">

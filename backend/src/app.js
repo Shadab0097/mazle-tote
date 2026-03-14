@@ -16,6 +16,7 @@ const uploadRoutes = require('./routes/upload.routes');
 const subscriberRoutes = require('./routes/subscriber.routes');
 const webhookRoutes = require('./routes/webhook.routes');
 const charityRoutes = require('./routes/charity.routes');
+const promoRoutes = require('./routes/promo.routes');
 
 const app = express();
 
@@ -82,6 +83,7 @@ app.use('/api/upload', uploadRoutes);
 app.use('/api/subscribers', subscriberRoutes);
 app.use('/api/webhooks', webhookRoutes);
 app.use('/api/charities', charityRoutes);
+app.use('/api/promos', promoRoutes);
 
 /* ---------------------------------------------------
    🏠 BASE

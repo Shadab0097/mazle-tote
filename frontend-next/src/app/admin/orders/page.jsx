@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchAllOrders } from '@/store/adminSlice';
 import { FiSearch, FiRefreshCw } from 'react-icons/fi';
 import api from '@/services/api';
-import { FiClock, FiCheckCircle, FiTruck, FiPackage, FiFilter, FiAlertCircle, FiX, FiPrinter, FiCopy, FiCreditCard } from 'react-icons/fi';
+import { FiClock, FiCheckCircle, FiTruck, FiPackage, FiFilter, FiAlertCircle, FiX, FiPrinter, FiCopy, FiCreditCard, FiTag } from 'react-icons/fi';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useToast } from '@/context/ToastContext';
@@ -158,9 +158,9 @@ const AdminOrders = () => {
                     <h1 className="text-3xl font-bold">Orders</h1>
                     <p className="text-gray-500 mt-1">Track and manage customer orders.</p>
                 </div>
-                {/* <Button variant="outline" size="sm" className="gap-2">
-                    <FiDownload /> Export
-                </Button> */}
+                <Button onClick={handleRefresh} variant="outline" className="flex items-center gap-2 border-gray-200">
+                    <FiRefreshCw className={loading ? "animate-spin" : ""} /> Refresh
+                </Button>
             </div>
 
             <ShippingLabelModal isOpen={showLabelModal} onClose={() => setShowLabelModal(false)} order={labelOrder} />
@@ -299,7 +299,16 @@ const AdminOrders = () => {
                                                 )}
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4 font-bold">${order.totalAmount.toFixed(2)}</td>
+                                        <td className="px-6 py-4">
+                                            <div className="font-bold text-[#2C2C2C]">${order.totalAmount.toFixed(2)}</div>
+                                            {order.promoCode && (
+                                                <div className="mt-1 flex items-center gap-1">
+                                                    <span className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-700 rounded-full flex items-center gap-1">
+                                                        <FiTag size={10} /> {order.promoCode} (-${order.discountAmount?.toFixed(2) || '0.00'})
+                                                    </span>
+                                                </div>
+                                            )}
+                                        </td>
                                         <td className="px-6 py-4">
                                             <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase ${getStatusStyle(order.status)}`}>
                                                 {getStatusIcon(order.status)}

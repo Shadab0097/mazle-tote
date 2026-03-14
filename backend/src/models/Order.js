@@ -61,6 +61,13 @@ const orderSchema = new mongoose.Schema(
             required: true,
             default: 0.0,
         },
+        promoCode: {
+            type: String,
+        },
+        discountAmount: {
+            type: Number,
+            default: 0,
+        },
         status: {
             type: String,
             required: true,
@@ -88,5 +95,33 @@ const orderSchema = new mongoose.Schema(
 orderSchema.index({ user: 1, createdAt: -1 });
 orderSchema.index({ status: 1 });
 orderSchema.index({ createdAt: -1 });
+
+// Pre-save middleware to track status change
+orderSchema.pre('save', function(next) {
+    if (this.isModified('status') && this.status === 'Paid') {
+        this._justPaid = true;
+    }
+    next();
+});
+
+// Post-save middleware to increment promo usage securely
+orderSchema.post('save', async function(doc, next) {
+    if (doc._justPaid && doc.promoCode) {
+        try {
+            // Dynamically load to prevent circular dependencies
+            const PromoCode = mongoose.model('PromoCode');
+            const promo = await PromoCode.findOne({ code: doc.promoCode });
+            if (promo) {
+                promo.uses += 1;
+                await promo.save();
+            }
+        } catch (error) {
+            console.error('Error incrementing promo usage on order completion:', error);
+        }
+        // Reset the flag
+        doc._justPaid = false; 
+    }
+    next();
+});
 
 module.exports = mongoose.model('Order', orderSchema);

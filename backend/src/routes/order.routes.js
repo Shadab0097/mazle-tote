@@ -7,13 +7,14 @@ const jwt = require('jsonwebtoken');
 const { protect } = require('../middlewares/userAuth.middleware');
 const { protectAdmin } = require('../middlewares/adminAuth.middleware');
 const sendEmail = require('../utils/sendEmail');
+const PromoCode = require('../models/PromoCode');
 
 // @desc    Create new order
 // @route   POST /api/orders
 // @access  Private (User)
 router.post('/', protect, async (req, res) => {
     try {
-        const { items, shippingAddress, payment, totalAmount, charityTrust } = req.body;
+        const { items, shippingAddress, payment, totalAmount, charityTrust, promoCode } = req.body;
 
         if (items && items.length === 0) {
             res.status(400);
@@ -38,6 +39,20 @@ router.post('/', protect, async (req, res) => {
             throw new Error('Invalid charity trust selected');
         }
 
+        let appliedPromo = null;
+        let discountApplied = 0;
+
+        if (promoCode) {
+            const promo = await PromoCode.findOne({ code: promoCode.toUpperCase(), isActive: true });
+            if (promo && (promo.maxUses === 0 || promo.uses < promo.maxUses)) {
+                appliedPromo = promo.code;
+                discountApplied = promo.discountAmount;
+            } else {
+                res.status(400);
+                throw new Error('Promo code is invalid, expired, or has reached its usage limit');
+            }
+        }
+
         const order = new Order({
             user: req.user._id,
             items,
@@ -45,6 +60,8 @@ router.post('/', protect, async (req, res) => {
             charityTrust,
             payment,
             totalAmount,
+            promoCode: appliedPromo,
+            discountAmount: discountApplied,
         });
 
         const createdOrder = await order.save();
@@ -60,7 +77,7 @@ router.post('/', protect, async (req, res) => {
 // @access  Public
 router.post('/guest', async (req, res) => {
     try {
-        const { items, shippingAddress, payment, totalAmount, charityTrust, guestEmail } = req.body;
+        const { items, shippingAddress, payment, totalAmount, charityTrust, guestEmail, promoCode } = req.body;
 
         if (items && items.length === 0) {
             res.status(400);
@@ -97,6 +114,20 @@ router.post('/guest', async (req, res) => {
             throw new Error('Invalid charity trust selected');
         }
 
+        let appliedPromo = null;
+        let discountApplied = 0;
+
+        if (promoCode) {
+            const promo = await PromoCode.findOne({ code: promoCode.toUpperCase(), isActive: true });
+            if (promo && (promo.maxUses === 0 || promo.uses < promo.maxUses)) {
+                appliedPromo = promo.code;
+                discountApplied = promo.discountAmount;
+            } else {
+                res.status(400);
+                throw new Error('Promo code is invalid, expired, or has reached its usage limit');
+            }
+        }
+
         const order = new Order({
             guestEmail,
             items,
@@ -104,6 +135,8 @@ router.post('/guest', async (req, res) => {
             charityTrust,
             payment,
             totalAmount,
+            promoCode: appliedPromo,
+            discountAmount: discountApplied,
         });
 
         const createdOrder = await order.save();

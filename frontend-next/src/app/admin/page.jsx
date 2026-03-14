@@ -23,7 +23,8 @@ import {
     FiEdit2,
     FiTrash2,
     FiCheck,
-    FiX
+    FiX,
+    FiTag
 } from 'react-icons/fi';
 
 import { useToast } from '@/context/ToastContext';
@@ -570,7 +571,16 @@ const AdminDashboard = () => {
                                         <td className="py-4 text-gray-500 text-xs font-medium">
                                             {new Date(order.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                                         </td>
-                                        <td className="py-4 font-bold text-[#2C2C2C]">${order.totalAmount.toFixed(2)}</td>
+                                        <td className="py-4">
+                                            <div className="font-bold text-[#2C2C2C]">${order.totalAmount.toFixed(2)}</div>
+                                            {order.promoCode && (
+                                                <div className="mt-1 flex items-center gap-1">
+                                                    <span className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-700 rounded-full flex items-center gap-1">
+                                                        <FiTag size={10} /> {order.promoCode} (-${order.discountAmount?.toFixed(2) || '0.00'})
+                                                    </span>
+                                                </div>
+                                            )}
+                                        </td>
                                         <td className="py-4">
                                             <span className={`px-3 py-1 rounded-full text-xs font-bold border ${getStatusStyle(order.status)}`}>
                                                 {order.status}
